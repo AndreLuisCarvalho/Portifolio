@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>André Carvalho | Diário de bordo</title>
+<meta name="description" content="Portfólio de André Carvalho — desenvolvimento web, sistemas e interfaces.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Chakra+Petch:wght@400;500;600&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* paleta: #00223F #154674 #3470A6 #4F8BB8 #70ADD3 #A0CAE3 */
+  --c0:#00223f; --c1:#154674; --c2:#3470a6; --c3:#4f8bb8; --c4:#70add3; --c5:#a0cae3;
+  --bg:#000d1a;
+  --panel:rgba(0,34,63,.55);
+  --line:rgba(160,202,227,.16);
+  --text:#eaf4fb;
+  --muted:#7fa3c4;
+  --accent:var(--c4);
+  --display:"Syne",system-ui,sans-serif;
+  --hud:"Chakra Petch",ui-monospace,monospace;
+  --body:"Sora",system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;overflow-x:clip}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-weight:300;overflow-x:clip;-webkit-font-smoothing:antialiased}
+body.booting{overflow:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+img{display:block;max-width:100%}
+::selection{background:var(--c4);color:var(--c0)}
+:focus-visible{outline:2px solid var(--c4);outline-offset:3px}
+.hud{font-family:var(--hud);text-transform:uppercase;letter-spacing:.14em;font-size:11px}
+
+/* ================= boot / hiperespaço ================= */
+#boot{position:fixed;inset:0;z-index:200;background:#000812;transition:opacity .7s ease .1s}
+#boot canvas{position:absolute;inset:0;width:100%;height:100%}
+#boot .log{position:absolute;left:clamp(16px,4vw,40px);bottom:clamp(16px,4vw,40px);font-family:var(--hud);font-size:13px;line-height:1.8;color:var(--c4);white-space:pre}
+#boot .log b{color:var(--text);font-weight:500}
+#boot .flash{position:absolute;inset:0;background:radial-gradient(circle,#fff 0%,var(--c5) 30%,var(--c2) 70%);opacity:0;pointer-events:none}
+#boot.jump .flash{animation:flash .9s ease forwards}
+@keyframes flash{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
+#boot.gone{opacity:0;pointer-events:none}
+#boot .skip{position:absolute;right:clamp(16px,4vw,40px);bottom:clamp(16px,4vw,40px);color:var(--muted)}
+
+/* ================= fundo 3D ================= */
+#space{position:fixed;inset:0;z-index:0;pointer-events:none}
+#space canvas{display:block;width:100%!important;height:100%!important}
+.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 90% at 50% 50%,transparent 55%,rgba(0,6,14,.75) 100%)}
+
+/* ================= HUD fixo ================= */
+.frame{position:fixed;inset:14px;z-index:30;pointer-events:none}
+.frame i{position:absolute;width:22px;height:22px;border-color:rgba(160,202,227,.45);border-style:solid;border-width:0}
+.frame i:nth-child(1){top:0;left:0;border-top-width:1px;border-left-width:1px}
+.frame i:nth-child(2){top:0;right:0;border-top-width:1px;border-right-width:1px}
+.frame i:nth-child(3){bottom:0;left:0;border-bottom-width:1px;border-left-width:1px}
+.frame i:nth-child(4){bottom:0;right:0;border-bottom-width:1px;border-right-width:1px}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:flex-start;padding:28px clamp(28px,4vw,48px)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand b{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:-.02em;width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--panel);backdrop-filter:blur(8px)}
+.brand span{color:var(--muted);line-height:1.6}
+.brand span em{font-style:normal;color:var(--text)}
+.telemetry{text-align:right;color:var(--muted);line-height:1.7}
+.telemetry em{font-style:normal;color:var(--c5)}
+.menu-btn{display:none;padding:10px 14px;border:1px solid var(--line);border-radius:99px;background:var(--panel);backdrop-filter:blur(8px)}
+
+/* navegação lateral */
+.sidenav{position:fixed;left:clamp(28px,4vw,48px);top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:6px}
+.sidenav a{display:flex;align-items:center;gap:12px;color:var(--muted);padding:5px 0;transition:color .3s}
+.sidenav a i{width:14px;height:1px;background:currentColor;transition:width .4s var(--ease)}
+.sidenav a span{opacity:0;transform:translateX(-6px);transition:.35s var(--ease)}
+.sidenav:hover a span{opacity:1;transform:none}
+.sidenav:hover{background:linear-gradient(90deg,rgba(0,13,26,.85),transparent);padding-right:40px}
+.sidenav a.on{color:var(--text)}
+.sidenav a.on i{width:34px;background:var(--c4);box-shadow:0 0 8px var(--c4)}
+.sidenav a:hover{color:var(--text)}
+
+/* sabre de luz: progresso */
+.saber{position:fixed;right:clamp(24px,3.4vw,44px);top:50%;transform:translateY(-50%);z-index:40;height:min(44vh,360px);width:10px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;pointer-events:none}
+.saber .blade{width:4px;border-radius:4px 4px 2px 2px;background:#f4fbff;height:calc(var(--sp,0) * 100%);box-shadow:0 0 4px #fff,0 0 10px var(--c4),0 0 24px var(--c4),0 0 44px var(--c3)}
+.saber .blade.on{animation:hum .1s steps(2) infinite}
+@keyframes hum{50%{opacity:.82}}
+.saber .hilt{width:10px;height:46px;margin-top:2px;border-radius:2px;background:linear-gradient(90deg,#33414f,#dfe8f0 45%,#3a4856);position:relative}
+.saber .hilt::before{content:"";position:absolute;left:0;right:0;top:8px;height:14px;background:repeating-linear-gradient(180deg,#1c2731 0 2px,transparent 2px 4px)}
+.saber .hilt::after{content:"";position:absolute;left:3px;top:28px;width:4px;height:5px;border-radius:1px;background:var(--c4);box-shadow:0 0 6px var(--c4)}
+
+/* mira (cursor) */
+.reticle-cursor{position:fixed;left:0;top:0;z-index:300;width:34px;height:34px;margin:-17px 0 0 -17px;pointer-events:none;transition:width .3s var(--ease),height .3s var(--ease),margin .3s var(--ease)}
+.reticle-cursor i{position:absolute;width:8px;height:8px;border-color:var(--c5);border-style:solid;border-width:0;transition:.3s var(--ease)}
+.reticle-cursor i:nth-child(1){top:0;left:0;border-top-width:1.5px;border-left-width:1.5px}
+.reticle-cursor i:nth-child(2){top:0;right:0;border-top-width:1.5px;border-right-width:1.5px}
+.reticle-cursor i:nth-child(3){bottom:0;left:0;border-bottom-width:1.5px;border-left-width:1.5px}
+.reticle-cursor i:nth-child(4){bottom:0;right:0;border-bottom-width:1.5px;border-right-width:1.5px}
+.reticle-cursor b{position:absolute;left:50%;top:50%;width:3px;height:3px;margin:-1.5px;border-radius:50%;background:var(--c4)}
+.reticle-cursor.lock{width:52px;height:52px;margin:-26px 0 0 -26px;animation:spin 3s linear infinite}
+.reticle-cursor.lock i{border-color:var(--c4)}
+@keyframes spin{to{transform:rotate(90deg)}}
+@media (hover:none){.reticle-cursor{display:none}}
+
+main{position:relative;z-index:2}
+section{position:relative}
+.wrap{padding-left:clamp(28px,12vw,190px);padding-right:clamp(28px,8vw,120px)}
+.tag{color:var(--c4);display:flex;align-items:center;gap:10px;margin-bottom:22px}
+.tag::before{content:"";width:28px;height:1px;background:var(--c4)}
+h2.title{font-family:var(--display);font-weight:800;font-size:clamp(40px,7vw,104px);line-height:.92;letter-spacing:-.04em}
+h2.title em{font-style:normal;background:linear-gradient(100deg,var(--c5),var(--c3));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ================= início ================= */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-top:120px;padding-bottom:110px}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(36px,11vw,190px);line-height:.86;letter-spacing:-.05em;text-transform:uppercase;margin:6px 0 24px}
+.hero h1 span{display:block}
+.hero h1 .l2{background:linear-gradient(100deg,var(--c5) 10%,var(--c3) 70%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.04em}
+.hero .role{font-family:var(--hud);font-size:clamp(16px,1.8vw,22px);color:var(--c5);min-height:1.6em}
+.hero .role .caret{display:inline-block;width:.55em;height:1.05em;vertical-align:-.15em;background:var(--c4);margin-left:3px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.hero p.intro{max-width:44ch;font-size:clamp(15px,1.3vw,18px);line-height:1.6;color:#c5dbea;margin-top:18px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.btn{position:relative;display:inline-flex;align-items:center;gap:10px;padding:14px 22px;font-family:var(--hud);font-weight:600;font-size:13px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--c4);color:var(--c0);background:var(--c4);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);transition:background .3s,color .3s}
+.btn:hover{background:var(--c5)}
+.btn.ghost{background:transparent;color:var(--text);border-color:var(--line)}
+.btn.ghost:hover{background:rgba(112,173,211,.12);border-color:var(--c4)}
+.btn svg{width:15px;height:15px}
+.altimeter{position:absolute;left:clamp(28px,12vw,190px);bottom:46px;display:flex;align-items:center;gap:16px;color:var(--muted)}
+.altimeter .ticks{display:flex;gap:4px;align-items:flex-end;height:14px}
+.altimeter .ticks i{width:1px;background:var(--muted);height:6px}
+.altimeter .ticks i:nth-child(5n+1){height:14px;background:var(--c4)}
+.altimeter .ticks{animation:slide 1.6s linear infinite}
+@keyframes slide{to{transform:translateX(-25px)}}
+.altimeter .mask{width:120px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent)}
+
+/* ================= abertura ================= */
+.saga{height:320vh}
+.sticky{position:sticky;top:0;height:100svh;overflow:hidden}
+.saga-pre{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(560px,calc(100% - 64px));text-align:center;font-family:var(--hud);font-size:clamp(15px,1.7vw,21px);line-height:1.6;color:var(--c4);opacity:var(--pre,0)}
+.crawl{position:absolute;inset:0;perspective:300px;perspective-origin:50% 0%;overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 38%);mask-image:linear-gradient(to bottom,transparent 0%,#000 38%)}
+.crawl-text{position:absolute;left:50%;top:100%;width:min(640px,calc(100% - 72px));transform-origin:50% 0%;transform:translateX(-50%) rotateX(34deg) translateY(var(--cy,0px));color:var(--c5);font-family:var(--body);font-weight:600;font-size:clamp(20px,2.6vw,34px);line-height:1.5;text-align:justify;hyphens:auto;opacity:var(--co,0)}
+.crawl-text h3{font-family:var(--display);text-align:center;font-weight:800;text-transform:uppercase;line-height:1.05;margin-bottom:1.1em}
+.crawl-text h3 small{display:block;font-family:var(--hud);font-weight:500;font-size:.48em;letter-spacing:.24em;margin-bottom:.7em;color:var(--c4)}
+.crawl-text p{margin-bottom:1em}
+
+/* ================= tripulante (holograma) ================= */
+.crew{min-height:100svh;display:grid;grid-template-columns:minmax(260px,.85fr) 1.15fr;gap:clamp(32px,6vw,90px);align-items:center;padding-top:120px;padding-bottom:120px}
+.holo{position:relative;width:min(340px,80%);margin:0 auto;aspect-ratio:3/4.4}
+.holo .figure{position:absolute;left:12%;right:12%;top:0;aspect-ratio:1;border-radius:50%;overflow:hidden;animation:holoFlicker 5s infinite}
+.holo .figure img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) sepia(1) hue-rotate(165deg) saturate(3.2) brightness(1.15) contrast(1.1);opacity:.85;mix-blend-mode:screen}
+.holo .figure::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(180deg,rgba(160,202,227,.22) 0 1px,transparent 1px 4px);animation:scan 6s linear infinite}
+.holo .figure::before{content:"";position:absolute;inset:0;z-index:1;border-radius:50%;box-shadow:inset 0 0 40px rgba(112,173,211,.6)}
+.holo .glitch{position:absolute;left:12%;right:12%;top:0;aspect-ratio:1;border-radius:50%;overflow:hidden;opacity:0;animation:glitch 4s steps(1) infinite}
+.holo .glitch img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) sepia(1) hue-rotate(165deg) saturate(4);transform:translateX(8px)}
+@keyframes holoFlicker{0%,100%{opacity:.95}47%{opacity:.95}48%{opacity:.55}49%{opacity:.95}72%{opacity:.85}}
+@keyframes scan{to{background-position:0 120px}}
+@keyframes glitch{0%,88%{opacity:0}89%{opacity:.7;clip-path:inset(20% 0 60% 0)}91%{opacity:.7;clip-path:inset(55% 0 25% 0);transform:translateX(-6px)}93%{opacity:0}}
+.holo .beam{position:absolute;left:0;right:0;bottom:6%;height:62%;background:linear-gradient(0deg,rgba(112,173,211,.35),rgba(112,173,211,0) 90%);clip-path:polygon(38% 100%,62% 100%,100% 0,0 0);filter:blur(1px)}
+.holo .base{position:absolute;left:30%;right:30%;bottom:0;height:12%;border-radius:50%;background:radial-gradient(ellipse at 50% 40%,var(--c5),var(--c2) 45%,transparent 70%);box-shadow:0 0 40px var(--c3)}
+.holo .base::after{content:"";position:absolute;inset:30% 20%;border:1px solid var(--c5);border-radius:50%;opacity:.6}
+.holo .id{position:absolute;left:50%;bottom:-40px;transform:translateX(-50%);white-space:nowrap;color:var(--muted)}
+.terminal{background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:clamp(20px,3vw,34px);clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px)}
+.terminal .head{display:flex;justify-content:space-between;color:var(--muted);padding-bottom:14px;margin-bottom:18px;border-bottom:1px dashed var(--line)}
+.terminal .head em{font-style:normal;color:var(--c4)}
+.terminal .out{font-family:var(--hud);font-size:clamp(14px,1.25vw,16px);line-height:1.75;color:#cfe3f1;min-height:9.5em;white-space:pre-wrap}
+.terminal .out .p{color:var(--c4)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);margin-top:24px;border:1px solid var(--line)}
+.stats div{background:rgba(0,13,26,.7);padding:16px}
+.stats b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(26px,3vw,40px);color:var(--c5);letter-spacing:-.03em}
+.stats span{color:var(--muted)}
+.orbits{position:relative;width:min(300px,100%);aspect-ratio:1;margin:34px auto 0}
+.orbits .core{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--c5),var(--c2) 60%,var(--c0));box-shadow:0 0 30px var(--c3);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:13px;color:var(--c0)}
+.orbit{position:absolute;left:50%;top:50%;border:1px dashed rgba(160,202,227,.22);border-radius:50%;animation:orbit linear infinite}
+.orbit .moon{position:absolute;left:50%;top:0;transform:translate(-50%,-50%)}
+.orbit .moon i{display:block;width:12px;height:12px;border-radius:50%;margin:0 auto;background:var(--mc);box-shadow:0 0 10px var(--mc)}
+.orbit .moon span{display:block;margin-top:6px;font-family:var(--hud);font-size:10px;letter-spacing:.1em;white-space:nowrap;color:var(--text);animation:orbit linear infinite reverse;animation-duration:inherit}
+.orbit .moon.b{top:100%}
+@keyframes orbit{to{rotate:360deg}}
+
+/* ================= missões (planetas) ================= */
+.missions .sticky{pointer-events:none}
+.mhead{position:absolute;top:96px;left:clamp(28px,12vw,190px);color:var(--muted);transition:opacity .4s}
+.mhead em{font-style:normal;color:var(--c5)}
+.target{position:absolute;left:0;top:0;width:100px;height:100px;opacity:0;transition:opacity .4s}
+.target.on{opacity:1}
+.target i{position:absolute;width:22%;height:22%;border-color:var(--c4);border-style:solid;border-width:0;transition:transform .7s var(--ease)}
+.target i:nth-child(1){top:0;left:0;border-top-width:2px;border-left-width:2px;transform:translate(-30%,-30%)}
+.target i:nth-child(2){top:0;right:0;border-top-width:2px;border-right-width:2px;transform:translate(30%,-30%)}
+.target i:nth-child(3){bottom:0;left:0;border-bottom-width:2px;border-left-width:2px;transform:translate(-30%,30%)}
+.target i:nth-child(4){bottom:0;right:0;border-bottom-width:2px;border-right-width:2px;transform:translate(30%,30%)}
+.target.on i{transform:none}
+.target .lbl{position:absolute;left:100%;top:0;margin-left:14px;white-space:nowrap;color:var(--c5);line-height:1.7}
+.target .lbl em{font-style:normal;color:var(--muted)}
+.mpanel{position:absolute;left:clamp(28px,12vw,190px);bottom:clamp(64px,10vh,110px);width:min(470px,calc(100% - 56px));padding:clamp(20px,2.4vw,30px);background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);opacity:0;transform:translateY(20px);transition:opacity .45s,transform .6s var(--ease);pointer-events:none}
+.mpanel.on{opacity:1;transform:none;pointer-events:auto}
+.mpanel .lock{color:var(--c4);display:flex;justify-content:space-between}
+.mpanel .lock b{font-weight:500;animation:blink 1.2s steps(1) infinite}
+.mpanel h3{font-family:var(--display);font-weight:800;font-size:clamp(30px,4vw,54px);letter-spacing:-.035em;line-height:.95;margin:12px 0 4px;overflow-wrap:anywhere}
+.mpanel .code{color:var(--muted)}
+.mpanel p{line-height:1.6;color:#cfe3f1;margin:14px 0 16px;font-size:15px}
+.mpanel dl{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.mpanel dt{color:var(--muted);margin-bottom:3px}
+.mpanel dd{font-family:var(--hud);font-size:14px;color:var(--text)}
+.mpanel .actions{margin-top:0}
+.minimap{position:absolute;right:clamp(64px,8vw,110px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:18px;align-items:flex-end}
+.minimap div{display:flex;align-items:center;gap:10px;color:var(--muted);transition:color .3s}
+.minimap i{width:9px;height:9px;border-radius:50%;border:1px solid var(--muted);transition:.3s}
+.minimap div.on{color:var(--text)}
+.minimap div.on i{background:var(--c4);border-color:var(--c4);box-shadow:0 0 10px var(--c4);transform:scale(1.4)}
+
+/* ================= diário de bordo ================= */
+.logbook{padding-top:clamp(100px,14vh,160px);padding-bottom:clamp(80px,12vh,140px)}
+.logbook .intro{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:36px}
+.logbook .intro p{max-width:38ch;color:var(--muted);line-height:1.6}
+.freqs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.freqs button{padding:8px 14px;border:1px solid var(--line);color:var(--muted);background:rgba(0,13,26,.5);transition:.25s}
+.freqs button[aria-pressed="true"]{color:var(--c0);background:var(--c4);border-color:var(--c4)}
+.log{border-top:1px solid var(--line);background:rgba(0,13,26,.45);backdrop-filter:blur(6px)}
+.row{position:relative;display:grid;grid-template-columns:90px 110px 1fr 150px auto;gap:18px;align-items:center;padding:20px 16px;border-bottom:1px solid var(--line);overflow:hidden}
+.row::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(112,173,211,.14),transparent);transform:translateX(-100%);transition:transform .7s var(--ease)}
+.row:hover::before{transform:translateX(100%)}
+.row .reg{color:var(--c4)}
+.row .date{color:var(--muted)}
+.row .name{font-family:var(--display);font-weight:600;font-size:clamp(18px,1.8vw,24px);letter-spacing:-.01em}
+.row .name small{display:block;font-family:var(--body);font-weight:300;font-size:13px;color:var(--muted);letter-spacing:0;margin-top:3px}
+.row .lang{display:flex;align-items:center;gap:8px}
+.row .lang i{width:8px;height:8px;border-radius:50%;background:var(--lc)}
+.row .links{display:flex;gap:14px;position:relative}
+.row .links a{color:var(--c5);border-bottom:1px solid transparent;transition:border-color .2s}
+.row .links a:hover{border-color:var(--c5)}
+.row.next .name{color:var(--c4)}
+.row.hide{display:none}
+
+/* ================= transmissão ================= */
+.comms{min-height:100svh;display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(32px,6vw,90px);align-items:center;padding-top:120px;padding-bottom:120px}
+.comms .lead{color:#c5dbea;line-height:1.6;max-width:40ch;margin:22px 0 30px}
+.saber-btn{position:relative;display:inline-flex;align-items:center;gap:0;height:56px}
+.saber-btn .hilt2{width:86px;height:18px;border-radius:3px;background:linear-gradient(180deg,#e6eef5,#57677a 55%,#2a3642);position:relative;flex:none}
+.saber-btn .hilt2::before{content:"";position:absolute;left:14px;top:3px;width:30px;height:12px;background:repeating-linear-gradient(90deg,#1c2731 0 3px,transparent 3px 6px)}
+.saber-btn .hilt2::after{content:"";position:absolute;right:12px;top:6px;width:6px;height:6px;border-radius:50%;background:var(--c4);box-shadow:0 0 6px var(--c4)}
+.saber-btn .blade2{height:8px;width:0;border-radius:0 6px 6px 0;background:#f4fbff;box-shadow:0 0 4px #fff,0 0 12px var(--c4),0 0 26px var(--c4),0 0 48px var(--c3);transition:width .5s var(--ease)}
+.saber-btn .txt{position:absolute;left:104px;top:50%;transform:translateY(-50%);font-family:var(--hud);letter-spacing:.14em;text-transform:uppercase;font-size:14px;font-weight:600;white-space:nowrap;transition:color .3s, left .5s var(--ease)}
+.saber-btn:hover .blade2,.saber-btn:focus-visible .blade2{width:min(300px,55vw)}
+.saber-btn:hover .txt,.saber-btn:focus-visible .txt{color:var(--c0);left:118px;text-shadow:none}
+.freq-list{margin-top:40px;border-top:1px solid var(--line)}
+.freq-list a{display:grid;grid-template-columns:88px 120px 1fr auto;gap:12px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);transition:padding .35s var(--ease)}
+.freq-list a span:first-child{color:var(--c4)}
+.freq-list a span:nth-child(2){color:var(--muted)}
+.freq-list a span:nth-child(3){overflow-wrap:anywhere}
+.freq-list a:hover{padding-left:12px}
+.freq-list a:hover span:nth-child(3){color:var(--c5)}
+.radar-wrap{position:relative;width:min(460px,100%);aspect-ratio:1;margin:0 auto}
+#radar{width:100%;height:100%;display:block}
+.radar-wrap .cap{position:absolute;left:0;right:0;bottom:-34px;text-align:center;color:var(--muted)}
+
+/* ================= rodapé ================= */
+footer{position:relative;z-index:2;overflow:hidden;padding-top:80px}
+.horizon{position:absolute;left:50%;bottom:-120vw;width:150vw;height:150vw;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle at 50% 0%,var(--c1),var(--c0) 30%,#000d1a 60%);box-shadow:0 -6px 40px rgba(112,173,211,.55),0 -2px 0 var(--c4) inset;pointer-events:none}
+.foot{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:40px;align-items:center;padding-bottom:70px}
+.badge{width:150px;height:150px;position:relative}
+.badge svg{width:100%;height:100%;animation:orbit 22s linear infinite}
+.badge svg text{font-family:var(--hud);font-size:10.5px;letter-spacing:3px;fill:var(--c5);text-transform:uppercase}
+.badge b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:30px}
+.foot .who b{display:block;font-family:var(--display);font-weight:600;font-size:clamp(20px,2.2vw,28px)}
+.foot .who span{display:block;color:var(--muted);margin-top:8px}
+.foot nav{display:flex;flex-direction:column;gap:8px;text-align:right}
+.foot nav a,.foot nav button{color:var(--muted);transition:color .2s;text-align:right}
+.foot nav a:hover,.foot nav button:hover{color:var(--c5)}
+
+/* revelar */
+.rv{opacity:0;transform:translateY(36px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.rv.in{opacity:1;transform:none}
+
+/* menu mobile */
+.mnav{position:fixed;inset:0;z-index:60;background:rgba(0,13,26,.94);backdrop-filter:blur(10px);display:flex;flex-direction:column;justify-content:center;gap:6px;padding:0 32px;opacity:0;pointer-events:none;transition:opacity .35s}
+.mnav.open{opacity:1;pointer-events:auto}
+.mnav a{font-family:var(--display);font-weight:800;font-size:clamp(30px,9vw,48px);letter-spacing:-.03em;padding:4px 0}
+.mnav a small{font-family:var(--hud);font-size:11px;color:var(--c4);letter-spacing:.14em;margin-right:12px;vertical-align:middle}
+
+@media (max-width:1000px){
+  .sidenav{display:none}
+  .wrap{padding-left:28px;padding-right:44px}
+  .crew,.comms{grid-template-columns:1fr}
+  .minimap{display:none}
+  .mhead,.altimeter,.mpanel{left:28px}
+  .row{grid-template-columns:70px 1fr auto;grid-template-areas:"reg name links" "date lang lang"}
+  .row .reg{grid-area:reg}.row .date{grid-area:date}.row .name{grid-area:name}.row .lang{grid-area:lang}.row .links{grid-area:links}
+  .foot{grid-template-columns:1fr;justify-items:start}
+  .foot nav{text-align:left}.foot nav a,.foot nav button{text-align:left}
+  .telemetry{display:none}
+  .menu-btn{display:block;pointer-events:auto}
+}
+@media (max-width:560px){
+  .brand span{display:none}
+  .freq-list a{grid-template-columns:70px 1fr auto}
+  .freq-list a span:nth-child(2){display:none}
+  .mpanel dl{grid-template-columns:1fr 1fr}
+  .saber{right:20px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01s!important}
+}
+</style>
+</head>
+<body class="booting">
+
+<div id="boot" aria-hidden="true">
+  <canvas id="boot-cv"></canvas>
+  <div class="flash"></div>
+  <div class="log" id="boot-log"></div>
+  <button class="skip hud" id="skip" tabindex="-1">pular ›</button>
+</div>
+
+<div id="space" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="reticle-cursor" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></div>
+
+<header class="topbar">
+  <a href="#inicio" class="brand"><b id="brand-ini">AC</b><span class="hud"><em id="brand-name">André Carvalho</em><br>diário de bordo</span></a>
+  <div class="telemetry hud"><span id="clock">--:--:--</span> · SP<br>coord <em id="coord">z 0.0</em></div>
+  <button class="menu-btn hud" id="menu-btn" aria-expanded="false" aria-controls="mnav">Menu</button>
+</header>
+
+<nav class="sidenav hud" id="sidenav" aria-label="Seções"></nav>
+<nav class="mnav" id="mnav" aria-label="Menu"></nav>
+<div class="saber" aria-hidden="true"><div class="blade" id="blade"></div><div class="hilt"></div></div>
+
+<main>
+  <section id="inicio" class="hero wrap">
+    <div class="tag hud" id="hero-tag">transmissão 001 — origem: terra</div>
+    <h1 aria-label="André Carvalho"><span class="l1" id="n1"></span><span class="l2" id="n2"></span></h1>
+    <div class="role" aria-live="polite"><span id="role"></span><span class="caret"></span></div>
+    <p class="intro" id="intro"></p>
+    <div class="actions">
+      <a class="btn" href="#missoes">Ver missões
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+      <a class="btn ghost" id="gh-btn" href="#" target="_blank" rel="noopener">GitHub
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+    </div>
+    <div class="altimeter hud"><div class="mask"><div class="ticks" id="ticks"></div></div><span>role para decolar</span></div>
+  </section>
+
+  <section id="saga" class="saga" aria-label="Abertura">
+    <div class="sticky">
+      <p class="saga-pre" id="saga-pre"></p>
+      <div class="crawl"><div class="crawl-text" id="crawl-text"></div></div>
+    </div>
+  </section>
+
+  <section id="sobre" class="crew wrap">
+    <div class="rv">
+      <div class="holo">
+        <div class="beam"></div>
+        <div class="figure"><img id="holo-img" alt="Foto de perfil do GitHub" src="" crossorigin="anonymous"></div>
+        <div class="glitch"><img id="holo-img2" alt="" src=""></div>
+        <div class="base"></div>
+        <div class="id hud" id="holo-id">tripulante · em órbita desde ----</div>
+      </div>
+    </div>
+    <div class="rv">
+      <div class="tag hud">02 — tripulante</div>
+      <div class="terminal">
+        <div class="head hud"><span>transmissão recebida</span><em id="sig">sinal ▮▮▮▮▯</em></div>
+        <div class="out" id="term"></div>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="orbits" id="orbits"><div class="core" id="core">AC</div></div>
+    </div>
+  </section>
+
+  <section id="missoes" class="missions" aria-label="Missões">
+    <div class="sticky">
+      <div class="mhead hud" id="mhead"></div>
+      <div class="target" id="target"><i></i><i></i><i></i><i></i><div class="lbl hud" id="tlbl"></div></div>
+      <div class="minimap hud" id="minimap"></div>
+      <div id="panels"></div>
+    </div>
+  </section>
+
+  <section id="bordo" class="logbook wrap">
+    <div class="intro rv">
+      <div><div class="tag hud">04 — diário de bordo</div><h2 class="title">Registro de<br><em>todas as rotas</em></h2></div>
+      <p id="log-desc">Cada repositório público vira uma entrada no diário, puxada direto do GitHub a cada visita.</p>
+    </div>
+    <div class="freqs hud rv" id="freqs" role="group" aria-label="Filtrar por linguagem"></div>
+    <div class="log rv" id="log"></div>
+  </section>
+
+  <section id="contato" class="comms wrap">
+    <div class="rv">
+      <div class="tag hud">05 — transmissão</div>
+      <h2 class="title">Mande um<br><em>sinal.</em></h2>
+      <p class="lead">Tem um projeto, uma ideia ou uma missão que precisa de tripulação? Abra um canal e eu respondo.</p>
+      <a class="saber-btn" id="mail-btn" href="#"><span class="hilt2"></span><span class="blade2"></span><span class="txt">Acender o sabre e escrever</span></a>
+      <div class="freq-list hud" id="freq-list"></div>
+    </div>
+    <div class="rv">
+      <div class="radar-wrap"><canvas id="radar"></canvas><div class="cap hud">varredura de canais ativos</div></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="horizon" aria-hidden="true"></div>
+  <div class="foot wrap">
+    <div class="badge" aria-hidden="true">
+      <svg viewBox="0 0 150 150"><defs><path id="circ" d="M75,75 m-58,0 a58,58 0 1,1 116,0 a58,58 0 1,1 -116,0"/></defs>
+        <text><textPath href="#circ" id="badge-text">andré carvalho · dev · em órbita · </textPath></text></svg>
+      <b id="badge-ini">AC</b>
+    </div>
+    <div class="who"><b id="foot-name"></b><span class="hud">Que o deploy esteja com você · <span id="foot-year"></span></span></div>
+    <nav class="hud" id="foot-nav"></nav>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* =====================================================================
+   CONFIG — edite só aqui
+   ===================================================================== */
+const CONFIG = {
+  githubUser: "AndreLuisCarvalho",
+  name: ["André", "Carvalho"],
+  fullName: "André Luis Carvalho",
+  initials: "AC",
+  roles: ["Desenvolvedor full stack", "Criador de interfaces", "Construtor de sistemas", "Explorador de novas rotas"],
+  intro: "Construo sites, sistemas e APIs do primeiro esboço ao deploy. Este é o meu diário de bordo: cada repositório é um planeta visitado.",
+  // texto do terminal na seção "tripulante" (linhas que começam com > aparecem como comando)
+  about: [
+    "> identificar --tripulante",
+    "André Luis Carvalho. Desenvolvedor web.",
+    "> missao --atual",
+    "Transformar ideias em produtos que funcionam: interfaces claras, back-end organizado e código no ar.",
+    "> status",
+    "Disponível para novas missões.",
+  ],
+  extraSkills: ["Node.js", "SQL", "Git"],   // somadas às linguagens que vêm do GitHub
+  // descrição de cada repositório (o GitHub da maioria está sem descrição)
+  notes: {
+    "HubRPG": "Projeto em JavaScript com API publicada na Vercel.",
+    "landing-page-loja": "Landing page da loja Equilibre.",
+    "sistema": "Sistema web em PHP.",
+    "Compiladores": "Projeto sobre compiladores.",
+    "app": "Aplicação web.",
+  },
+  hide: [],                 // repositórios para esconder
+  saga: {
+    pre: "Há pouco tempo, num repositório não muito distante…",
+    episode: "EPISÓDIO I",
+    title: "Uma Nova Rota",
+    paragraphs: [
+      "É um período de prazos curtos. Pequenos negócios espalhados pela galáxia ainda dependem de planilhas, mensagens perdidas e sites que não abrem no celular.",
+      "Armado de um teclado, café e muita curiosidade, um desenvolvedor parte em missão para transformar ideias em sistemas que funcionam de verdade.",
+      "Cada commit o leva a um novo planeta. Este é o registro dessa jornada…",
+    ],
+  },
+  contacts: [
+    { label: "E-mail", value: "seu-email@exemplo.com", href: "mailto:seu-email@exemplo.com" },
+    { label: "GitHub", value: "AndreLuisCarvalho", href: "https://github.com/AndreLuisCarvalho" },
+    { label: "LinkedIn", value: "/in/seu-perfil", href: "https://www.linkedin.com/" },
+    { label: "Instagram", value: "@seuperfil", href: "https://www.instagram.com/" },
+  ],
+  // cópia usada se a API do GitHub não responder
+  fallback: {
+    user: { login: "AndreLuisCarvalho", public_repos: 6, followers: 3, created_at: "2020-03-14T20:03:37Z", avatar_url: "https://avatars.githubusercontent.com/u/62187891?v=4" },
+    repos: [
+      { name: "HubRPG", language: "JavaScript", homepage: "https://hubrpg-api.vercel.app", html_url: "https://github.com/AndreLuisCarvalho/HubRPG", pushed_at: "2026-11-17T00:00:00Z", stargazers_count: 0 },
+      { name: "app", language: "HTML", homepage: "", html_url: "https://github.com/AndreLuisCarvalho/app", pushed_at: "2026-03-17T00:00:00Z", stargazers_count: 0 },
+      { name: "landing-page-loja", language: "CSS", homepage: "", html_url: "https://github.com/AndreLuisCarvalho/landing-page-loja", pushed_at: "2025-12-02T00:00:00Z", stargazers_count: 0, description: "Landing Page Equilibre" },
+      { name: "sistema", language: "PHP", homepage: "", html_url: "https://github.com/AndreLuisCarvalho/sistema", pushed_at: "2025-11-06T00:00:00Z", stargazers_count: 0 },
+      { name: "Compiladores", language: "HTML", homepage: "", html_url: "https://github.com/AndreLuisCarvalho/Compiladores", pushed_at: "2025-11-04T00:00:00Z", stargazers_count: 0 },
+    ],
+  },
+};
+
+/* ===================================================================== */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isMobile = matchMedia("(max-width: 1000px)").matches;
+const PAL = ["#00223f", "#154674", "#3470a6", "#4f8bb8", "#70add3", "#a0cae3"];
+const LANG = { JavaScript: "#a0cae3", TypeScript: "#70add3", HTML: "#4f8bb8", CSS: "#70add3", PHP: "#3470a6", Python: "#a0cae3" };
+const ext = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17 17 7M8 7h9v9"/></svg>';
+const fmtDate = d => new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }).replace(/\//g, ".");
+const code = (name, i) => (name.replace(/[^A-Za-z]/g, "").replace(/[aeiou]/gi, "").slice(0, 3) || "PLN").toUpperCase() + "-" + String(i + 1).padStart(2, "0");
+
+/* ---------- GitHub ---------- */
+const GH = { user: null, repos: [] };
+async function loadGitHub() {
+  const u = CONFIG.githubUser, key = "gh2:" + u;
+  try { const c = JSON.parse(sessionStorage.getItem(key) || "null"); if (c && Date.now() - c.t < 6e5) return Object.assign(GH, c.d); } catch (e) {}
+  const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 5000);
+  try {
+    const o = { signal: ctl.signal, headers: { Accept: "application/vnd.github+json" } };
+    const [ur, rr] = await Promise.all([
+      fetch(`https://api.github.com/users/${encodeURIComponent(u)}`, o),
+      fetch(`https://api.github.com/users/${encodeURIComponent(u)}/repos?per_page=100&sort=pushed`, o),
+    ]);
+    if (!ur.ok || !rr.ok) throw new Error("GitHub " + ur.status + "/" + rr.status);
+    GH.user = await ur.json(); GH.repos = await rr.json();
+    try { sessionStorage.setItem(key, JSON.stringify({ t: Date.now(), d: GH })); } catch (e) {}
+  } catch (e) {
+    console.warn("GitHub indisponível, usando cópia local", e);
+    GH.user = CONFIG.fallback.user; GH.repos = CONFIG.fallback.repos;
+  } finally { clearTimeout(to); }
+}
+function missions() {
+  const hide = new Set(CONFIG.hide.map(s => s.toLowerCase()));
+  return GH.repos
+    .filter(r => !r.fork && !r.archived && !hide.has(r.name.toLowerCase()) && r.name.toLowerCase() !== CONFIG.githubUser.toLowerCase())
+    .sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at))
+    .map((r, i) => ({
+      name: r.name, code: code(r.name, i), lang: r.language || "—",
+      desc: CONFIG.notes[r.name] || r.description || (r.language ? `Projeto em ${r.language}.` : "Projeto no GitHub."),
+      demo: r.homepage || "", repo: r.html_url, date: r.pushed_at, stars: r.stargazers_count || 0,
+    }));
+}
+
+/* ---------- monta a página ---------- */
+const SECTIONS = [["inicio", "Início"], ["saga", "Abertura"], ["sobre", "Tripulante"], ["missoes", "Missões"], ["bordo", "Diário de bordo"], ["contato", "Transmissão"]];
+let M = [];
+function build() {
+  M = missions();
+  const year = new Date().getFullYear();
+  const gh = "https://github.com/" + CONFIG.githubUser;
+  $("#brand-ini").textContent = $("#badge-ini").textContent = $("#core").textContent = CONFIG.initials;
+  $("#brand-name").textContent = CONFIG.name.join(" ");
+  $("#intro").textContent = CONFIG.intro;
+  $("#gh-btn").href = gh;
+  $("#ticks").innerHTML = "<i></i>".repeat(40);
+  $("#sidenav").innerHTML = SECTIONS.map(([id, l], i) => `<a href="#${id}" data-sec="${id}"><i></i><span>${String(i + 1).padStart(2, "0")} ${l}</span></a>`).join("");
+  $("#mnav").innerHTML = SECTIONS.map(([id, l], i) => `<a href="#${id}"><small>${String(i + 1).padStart(2, "0")}</small>${l}</a>`).join("");
+  // abertura
+  $("#saga-pre").textContent = CONFIG.saga.pre;
+  $("#crawl-text").innerHTML = `<h3><small>${esc(CONFIG.saga.episode)}</small>${esc(CONFIG.saga.title)}</h3>` + CONFIG.saga.paragraphs.map(p => `<p>${esc(p)}</p>`).join("");
+  // tripulante
+  const av = GH.user?.avatar_url || CONFIG.fallback.user.avatar_url;
+  $("#holo-img").src = $("#holo-img2").src = av + (av.includes("?") ? "&" : "?") + "s=400";
+  const since = new Date(GH.user?.created_at || CONFIG.fallback.user.created_at).getFullYear();
+  $("#holo-id").textContent = `tripulante · em órbita desde ${since}`;
+  const langs = [...new Set([...M.map(m => m.lang).filter(l => l !== "—"), ...CONFIG.extraSkills])].slice(0, 6);
+  $("#stats").innerHTML = [[GH.user?.public_repos ?? M.length, "repositórios"], [year - since, "anos de órbita"], [langs.length, "tecnologias"]]
+    .map(([n, l]) => `<div><b>${n}</b><span class="hud">${l}</span></div>`).join("");
+  const rings = [[44, 18], [70, 28], [96, 40]];
+  $("#orbits").insertAdjacentHTML("beforeend", rings.map(([size, dur], r) => {
+    const a = langs[r * 2], b = langs[r * 2 + 1];
+    if (!a) return "";
+    const moon = (l, cls, c) => `<div class="moon ${cls}" style="--mc:${c}"><i></i><span style="animation-duration:${dur}s">${esc(l)}</span></div>`;
+    return `<div class="orbit" style="width:${size}%;height:${size}%;margin:-${size / 2}% 0 0 -${size / 2}%;animation-duration:${dur}s;${r % 2 ? "animation-direction:reverse" : ""}">
+      ${moon(a, "", PAL[5 - r])}${b ? moon(b, "b", PAL[4 - r]) : ""}</div>`;
+  }).join(""));
+  // missões
+  $("#missoes").style.height = (M.length * 120 + 100) + "vh";
+  $("#mhead").innerHTML = `03 — missões · <em>${M.length} planetas mapeados</em>`;
+  $("#minimap").innerHTML = M.map(m => `<div><span>${esc(m.code)}</span><i></i></div>`).join("");
+  $("#panels").innerHTML = M.map((m, i) => `
+    <div class="mpanel" data-i="${i}">
+      <div class="lock hud"><span>alvo travado · ${i + 1}/${M.length}</span><b>● ao vivo</b></div>
+      <h3>${esc(m.name)}</h3>
+      <div class="code hud">planeta ${esc(m.code)}</div>
+      <p>${esc(m.desc)}</p>
+      <dl class="hud"><div><dt>linguagem</dt><dd>${esc(m.lang)}</dd></div><div><dt>último pouso</dt><dd>${fmtDate(m.date)}</dd></div><div><dt>status</dt><dd>${m.demo ? "no ar" : "código aberto"}</dd></div></dl>
+      <div class="actions">
+        ${m.demo ? `<a class="btn" href="${esc(m.demo)}" target="_blank" rel="noopener">Visitar ${ext}</a>` : ""}
+        <a class="btn ${m.demo ? "ghost" : ""}" href="${esc(m.repo)}" target="_blank" rel="noopener">Ver código ${ext}</a>
+      </div>
+    </div>`).join("");
+  // diário
+  const fl = ["Todas", ...new Set(M.map(m => m.lang))];
+  $("#freqs").innerHTML = fl.map((l, i) => `<button aria-pressed="${i === 0}" data-l="${esc(l)}">${esc(l)}</button>`).join("");
+  $("#log").innerHTML = M.map((m, i) => `
+    <div class="row" data-l="${esc(m.lang)}">
+      <span class="reg hud">REG-${String(i + 1).padStart(3, "0")}</span>
+      <span class="date hud">${fmtDate(m.date)}</span>
+      <span class="name">${esc(m.name)}<small>${esc(m.desc)}</small></span>
+      <span class="lang hud" style="--lc:${LANG[m.lang] || PAL[3]}"><i></i>${esc(m.lang)}</span>
+      <span class="links hud">${m.demo ? `<a href="${esc(m.demo)}" target="_blank" rel="noopener">no ar ↗</a>` : ""}<a href="${esc(m.repo)}" target="_blank" rel="noopener">código ↗</a></span>
+    </div>`).join("") + `
+    <div class="row next" data-l="*">
+      <span class="reg hud">REG-${String(M.length + 1).padStart(3, "0")}</span><span class="date hud">em breve</span>
+      <span class="name">Próxima missão<small>O seu projeto pode ser o próximo planeta deste mapa.</small></span>
+      <span class="lang hud" style="--lc:var(--c4)"><i></i>a definir</span>
+      <span class="links hud"><a href="#contato">abrir canal ↗</a></span>
+    </div>`;
+  // contato
+  const mail = CONFIG.contacts.find(c => c.href.startsWith("mailto:"));
+  if (mail) $("#mail-btn").href = mail.href;
+  $("#freq-list").innerHTML = CONFIG.contacts.map((c, i) => `<a href="${esc(c.href)}" ${c.href.startsWith("mailto:") ? "" : 'target="_blank" rel="noopener"'}><span>freq ${String(i + 1).padStart(2, "0")}</span><span>${esc(c.label)}</span><span>${esc(c.value)}</span>${ext.replace("<svg", '<svg width="16" height="16"')}</a>`).join("");
+  // rodapé
+  $("#foot-name").textContent = CONFIG.fullName;
+  $("#foot-year").textContent = year;
+  $("#badge-text").textContent = `${CONFIG.name.join(" ")} · dev · em órbita · `;
+  $("#foot-nav").innerHTML = CONFIG.contacts.filter(c => !c.href.startsWith("mailto:")).map(c => `<a href="${esc(c.href)}" target="_blank" rel="noopener">${esc(c.label)} ↗</a>`).join("") + `<button id="totop">↑ voltar à origem</button>`;
+}
+
+/* ---------- boot: salto para o hiperespaço ---------- */
+function boot(ready) {
+  const el = $("#boot"), cv = $("#boot-cv"), ctx = cv.getContext("2d"), log = $("#boot-log");
+  let W, H; const fit = () => { W = cv.width = innerWidth * Math.min(devicePixelRatio, 2); H = cv.height = innerHeight * Math.min(devicePixelRatio, 2); };
+  fit(); addEventListener("resize", fit);
+  const stars = Array.from({ length: 700 }, () => ({ x: (Math.random() - .5) * 2, y: (Math.random() - .5) * 2, z: Math.random() }));
+  const lines = ["<b>&gt;</b> sistemas de navegação ........ ok", "<b>&gt;</b> destino: " + CONFIG.name.join(" ").toLowerCase(), "<b>&gt;</b> rota: github/" + CONFIG.githubUser, "<b>&gt;</b> saltando para o hiperespaço"];
+  const DUR = reduce ? 300 : 2600, t0 = performance.now();
+  let done = false, finished = false;
+  const finish = () => {
+    if (finished) return; finished = true;
+    el.classList.add("jump");
+    setTimeout(() => { el.classList.add("gone"); document.body.classList.remove("booting"); start(); }, reduce ? 50 : 380);
+    setTimeout(() => el.remove(), 1400);
+  };
+  $("#skip").onclick = () => ready.then(finish);
+  ready.then(() => done = true);
+  (function frame(now) {
+    if (finished) return;
+    const t = (now - t0) / DUR, sp = .002 + Math.pow(clamp(t), 3) * .09;
+    ctx.fillStyle = `rgba(0,8,18,${t > .6 ? .25 : .9})`; ctx.fillRect(0, 0, W, H);
+    const cx = W / 2, cy = H / 2, f = Math.min(W, H) * .5;
+    for (const s of stars) {
+      const pz = s.z; s.z -= sp;
+      if (s.z <= .01) { s.x = (Math.random() - .5) * 2; s.y = (Math.random() - .5) * 2; s.z = 1; continue; }
+      const x1 = cx + s.x / pz * f, y1 = cy + s.y / pz * f, x2 = cx + s.x / s.z * f, y2 = cy + s.y / s.z * f;
+      const b = 1 - s.z;
+      ctx.strokeStyle = `rgba(${lerp(112, 234, b) | 0},${lerp(173, 244, b) | 0},${lerp(211, 251, b) | 0},${b})`;
+      ctx.lineWidth = Math.max(1, b * 2.4 * devicePixelRatio);
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    }
+    const n = Math.min(lines.length, Math.floor(clamp(t) * lines.length * 1.1) + 1);
+    log.innerHTML = lines.slice(0, n).join("\n");
+    if (t >= 1 && done) finish(); else requestAnimationFrame(frame);
+  })(t0);
+  // garantia: se a aba estiver em segundo plano, termina mesmo assim
+  setTimeout(() => ready.then(finish), DUR + 4000);
+}
+
+/* ---------- textos animados ---------- */
+function scramble(el, text, delay = 0) {
+  const G = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&<>/*";
+  const t0 = performance.now() + delay;
+  return new Promise(res => (function f(now) {
+    const k = (now - t0) / 55;
+    let out = "";
+    for (let i = 0; i < text.length; i++) out += i < k - 6 ? text[i] : (k > i ? G[(Math.random() * G.length) | 0] : " ");
+    el.textContent = out;
+    if (k - 6 < text.length) requestAnimationFrame(f); else { el.textContent = text; res(); }
+  })(performance.now()));
+}
+function typeRoles() {
+  const el = $("#role"); let i = 0, j = 0, del = false;
+  (function tick() {
+    const w = CONFIG.roles[i];
+    el.textContent = w.slice(0, j);
+    if (!del && j < w.length) j++;
+    else if (!del) { del = true; return setTimeout(tick, 1600); }
+    else if (j > 0) j--;
+    else { del = false; i = (i + 1) % CONFIG.roles.length; }
+    setTimeout(tick, del ? 28 : 55);
+  })();
+}
+function typeTerminal() {
+  const out = $("#term"); let started = false;
+  const io = new IntersectionObserver(es => {
+    if (!es[0].isIntersecting || started) return; started = true; io.disconnect();
+    const lines = CONFIG.about; let li = 0, ci = 0, html = "";
+    (function tick() {
+      if (li >= lines.length) { out.innerHTML = html + '<span class="caret" style="display:inline-block;width:.55em;height:1em;background:var(--c4);vertical-align:-.12em;animation:blink 1s steps(1) infinite"></span>'; return; }
+      const L = lines[li], cmd = L.startsWith(">");
+      ci++;
+      const part = esc(L.slice(0, ci));
+      out.innerHTML = html + (cmd ? `<span class="p">${part}</span>` : part);
+      if (ci >= L.length) { html += (cmd ? `<span class="p">${esc(L)}</span>` : esc(L)) + "\n"; li++; ci = 0; return setTimeout(tick, cmd ? 250 : 420); }
+      setTimeout(tick, reduce ? 0 : (cmd ? 35 : 14));
+    })();
+  }, { threshold: .35 });
+  io.observe(out);
+}
+
+/* =====================================================================
+   ESPAÇO 3D
+   ===================================================================== */
+function seeded(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+function planetTexture(seed) {
+  const R = seeded(seed), c = document.createElement("canvas"); c.width = 512; c.height = 256;
+  const x = c.getContext("2d"), off = R() * 6, freq = .02 + R() * .05, shift = Math.floor(R() * 3);
+  for (let y = 0; y < 256; y += 2) {
+    const t = (Math.sin(y * freq + off) + Math.sin(y * freq * 2.7 + off * 2) * .5 + 1.5) / 3;
+    x.fillStyle = PAL[clamp(Math.floor(t * 4) + shift, 0, 5)]; x.fillRect(0, y, 512, 2);
+  }
+  for (let k = 0; k < 500; k++) { x.fillStyle = `rgba(234,244,251,${R() * .09})`; x.fillRect(R() * 512, R() * 256, 20 + R() * 120, 1 + R() * 2); }
+  if (R() > .5) for (let k = 0; k < 3; k++) { // tempestades
+    const sx = R() * 512, sy = 60 + R() * 140, rr = 6 + R() * 16;
+    const g = x.createRadialGradient(sx, sy, 0, sx, sy, rr * 2); g.addColorStop(0, "rgba(160,202,227,.6)"); g.addColorStop(1, "rgba(160,202,227,0)");
+    x.fillStyle = g; x.beginPath(); x.ellipse(sx, sy, rr * 2, rr, 0, 0, 6.283); x.fill();
+  }
+  return new THREE.CanvasTexture(c);
+}
+function ringTexture(seed) {
+  const R = seeded(seed + 7), c = document.createElement("canvas"); c.width = c.height = 512;
+  const x = c.getContext("2d");
+  for (let r = 160; r < 256; r += 2) { x.strokeStyle = `rgba(160,202,227,${(.1 + R() * .5) * (r < 180 ? .4 : 1)})`; x.lineWidth = 2; x.beginPath(); x.arc(256, 256, r, 0, 6.283); x.stroke(); }
+  return new THREE.CanvasTexture(c);
+}
+let glowTex;
+function makePlanet(radius, seed, ring) {
+  const g = new THREE.Group();
+  if (!glowTex) {
+    const c = document.createElement("canvas"); c.width = c.height = 256;
+    const x = c.getContext("2d"), gr = x.createRadialGradient(128, 128, 50, 128, 128, 128);
+    gr.addColorStop(0, "rgba(112,173,211,.55)"); gr.addColorStop(1, "rgba(112,173,211,0)");
+    x.fillStyle = gr; x.fillRect(0, 0, 256, 256); glowTex = new THREE.CanvasTexture(c);
+  }
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+  glow.scale.set(radius * 3.4, radius * 3.4, 1);
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(radius, 48, 32), new THREE.MeshLambertMaterial({ map: planetTexture(seed) }));
+  sphere.rotation.z = .2;
+  g.add(glow, sphere);
+  if (ring) {
+    const rm = new THREE.Mesh(new THREE.RingGeometry(radius * 1.25, radius * 2.05, 96), new THREE.MeshBasicMaterial({ map: ringTexture(seed), transparent: true, side: THREE.DoubleSide, depthWrite: false }));
+    rm.rotation.x = Math.PI * .42; rm.rotation.y = -.3; g.add(rm);
+  }
+  g.userData = { sphere, radius };
+  return g;
+}
+
+let W3 = null;
+function initSpace() {
+  if (!window.THREE) return null;
+  const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.5 : 2));
+  renderer.setSize(innerWidth || 1280, innerHeight || 720);
+  renderer.setClearColor(0x000d1a, 1);
+  $("#space").appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, (innerWidth || 16) / (innerHeight || 9), .1, 900);
+  const sun = new THREE.DirectionalLight(0xffffff, 1.45); sun.position.set(-1, .55, .8);
+  scene.add(sun, new THREE.AmbientLight(0x3470a6, .3));
+
+  // estrelas
+  const star = document.createElement("canvas"); star.width = star.height = 32;
+  const sx = star.getContext("2d"), sg = sx.createRadialGradient(16, 16, 0, 16, 16, 16);
+  sg.addColorStop(0, "#fff"); sg.addColorStop(.3, "rgba(255,255,255,.8)"); sg.addColorStop(1, "rgba(255,255,255,0)");
+  sx.fillStyle = sg; sx.fillRect(0, 0, 32, 32);
+  const starTex = new THREE.CanvasTexture(star);
+  const layer = (n, size) => {
+    const p = new Float32Array(n * 3), c = new Float32Array(n * 3);
+    const cols = [new THREE.Color("#eaf4fb"), new THREE.Color("#a0cae3"), new THREE.Color("#70add3")];
+    for (let i = 0; i < n; i++) {
+      p.set([(Math.random() - .5) * 300, (Math.random() - .5) * 180, 60 - Math.random() * 520], i * 3);
+      const k = cols[(Math.random() * 3) | 0]; c.set([k.r, k.g, k.b], i * 3);
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(p, 3)); g.setAttribute("color", new THREE.BufferAttribute(c, 3));
+    return new THREE.Points(g, new THREE.PointsMaterial({ size, map: starTex, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  };
+  scene.add(layer(isMobile ? 2500 : 5000, .55), layer(isMobile ? 300 : 600, 1.3));
+  // nebulosa: sprites grandes e suaves
+  const neb = document.createElement("canvas"); neb.width = neb.height = 256;
+  const nx = neb.getContext("2d"), ng = nx.createRadialGradient(128, 128, 0, 128, 128, 128);
+  ng.addColorStop(0, "rgba(52,112,166,.35)"); ng.addColorStop(1, "rgba(52,112,166,0)"); nx.fillStyle = ng; nx.fillRect(0, 0, 256, 256);
+  const nebTex = new THREE.CanvasTexture(neb);
+  [[-40, 20, -120, 140], [50, -25, -220, 180], [-20, -30, -330, 160], [30, 30, -40, 90]].forEach(([x, y, z, s]) => {
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: nebTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: .8 }));
+    sp.position.set(x, y, z); sp.scale.set(s, s * .7, 1); scene.add(sp);
+  });
+
+  // planeta de abertura
+  const home = makePlanet(2.6, 99, true);
+  if (isMobile) home.position.set(1.4, 3.2, -7); else home.position.set(4.6, .4, -5);
+  scene.add(home);
+
+  // planetas das missões
+  const planets = M.map((m, i) => {
+    const r = 2.2 + (i % 3) * .5, side = i % 2 ? 1 : -1;
+    const p = makePlanet(r, 1000 + i * 137, i % 2 === 0);
+    p.position.set(side * (6 + (i % 3) * 2), ((i % 3) - 1) * 3, -70 - i * 48);
+    scene.add(p);
+    const off = isMobile ? new THREE.Vector3(0, -r * .95, r * 4.6) : new THREE.Vector3(-r * 1.5, r * .3, r * 3.8);
+    const lookOff = isMobile ? new THREE.Vector3(0, -r * .95, 0) : new THREE.Vector3(-r * 1.5, 0, 0);
+    return { obj: p, r, pos: p.position.clone().add(off), look: p.position.clone().add(lookOff) };
+  });
+
+  // hiperespaço: riscos de luz
+  const WN = isMobile ? 220 : 480, wPos = new Float32Array(WN * 6), wData = [];
+  for (let i = 0; i < WN; i++) { const a = Math.random() * 6.283, r = 2 + Math.random() * 12; wData.push({ x: Math.cos(a) * r, y: Math.sin(a) * r * .65, z: -Math.random() * 90 }); }
+  const wGeo = new THREE.BufferGeometry(); wGeo.setAttribute("position", new THREE.BufferAttribute(wPos, 3));
+  const wMat = new THREE.LineBasicMaterial({ color: 0xcfe6f5, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+  const warp = new THREE.LineSegments(wGeo, wMat); warp.frustumCulled = false; scene.add(warp);
+
+  addEventListener("resize", () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
+  return { renderer, scene, camera, home, planets, wPos, wData, wGeo, wMat, WN };
+}
+
+/* ---------- rolagem ---------- */
+const S = { ps: 0, pa: 0, pm: 0, pr: 0, vel: 0, lastY: 0, active: -1, hold: false };
+const prog = el => { const r = el.getBoundingClientRect(); return clamp(-r.top / (el.offsetHeight - innerHeight || 1)); };
+const pass = el => { const r = el.getBoundingClientRect(); return clamp((innerHeight - r.top) / (r.height + innerHeight)); };
+let humT;
+function onScroll() {
+  const saga = $("#saga");
+  S.ps = prog(saga); S.pa = pass($("#sobre")); S.pm = prog($("#missoes"));
+  const mEl = $("#missoes"), mEnd = mEl.offsetTop + mEl.offsetHeight - innerHeight, maxY = document.documentElement.scrollHeight - innerHeight;
+  S.pr = clamp((scrollY - mEnd) / (maxY - mEnd || 1));
+  // abertura
+  saga.style.setProperty("--pre", S.ps < .02 ? clamp(S.ps * 50) : clamp(1 - (S.ps - .1) / .06));
+  const ct = $("#crawl-text"), cp = clamp((S.ps - .14) / .86);
+  ct.style.setProperty("--co", clamp((S.ps - .13) / .04));
+  ct.style.setProperty("--cy", -(cp * (innerHeight * 1.3 + ct.offsetHeight * 1.4)) + "px");
+  // missões
+  const n = M.length, t = S.pm * n, k = Math.min(n - 1, Math.floor(t)), f = t - k;
+  const r = mEl.getBoundingClientRect(), inside = r.top <= 1 && r.bottom >= innerHeight - 1;
+  S.active = inside && n ? k : -1;
+  S.hold = inside && f > .38 && f < .97 && S.pm < 1;
+  $$(".mpanel").forEach((p, i) => p.classList.toggle("on", S.hold && i === k));
+  $$("#minimap div").forEach((d, i) => d.classList.toggle("on", inside && i === k));
+  $("#mhead").style.opacity = inside ? 1 : 0;
+  // sabre
+  const blade = $("#blade");
+  blade.style.setProperty("--sp", clamp(scrollY / (maxY || 1)));
+  blade.classList.add("on"); clearTimeout(humT); humT = setTimeout(() => blade.classList.remove("on"), 160);
+  // navegação
+  let cur = "inicio";
+  SECTIONS.forEach(([id]) => { if (document.getElementById(id).getBoundingClientRect().top <= innerHeight * .45) cur = id; });
+  $$("#sidenav a").forEach(a => a.classList.toggle("on", a.dataset.sec === cur));
+}
+
+/* ---------- câmera ---------- */
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+function cameraPath(T) {
+  const pos = V(0, 0, 10), look = V(0, 0, 0);
+  pos.z = lerp(10, 3, ease(S.ps)); pos.y = lerp(0, .6, S.ps);
+  look.set(pos.x, pos.y * .5, pos.z - 10);
+  if (S.pa > 0) {
+    const e = ease(S.pa);
+    pos.set(lerp(0, -1.5, e), lerp(.6, 1.2, e), lerp(3, -26, e));
+    look.set(pos.x * .5, pos.y * .6, pos.z - 10);
+  }
+  const P = W3.planets;
+  if (S.pm > 0 && P.length) {
+    const n = P.length, t = S.pm * n, i = Math.min(n - 1, Math.floor(t)), f = t - i;
+    const from = i === 0 ? { pos: V(-1.5, 1.2, -26), look: V(-.75, .7, -36) } : P[i - 1];
+    const e = ease(clamp(f / .38));
+    pos.lerpVectors(from.pos, P[i].pos, e); pos.y += Math.sin(e * Math.PI) * 4;
+    look.lerpVectors(from.look, P[i].look, e);
+    // pequena órbita enquanto o alvo está travado
+    const h = clamp((f - .38) / .62);
+    pos.x += Math.sin(h * 1.2) * P[i].r * .25; pos.y += Math.sin(T * .5) * .05;
+  }
+  if (S.pr > 0 && P.length) {
+    const last = P[P.length - 1], e = ease(S.pr);
+    // afasta a nave e aponta para o céu, deixando os planetas para trás
+    pos.copy(last.pos).add(V(0, e * 30, e * 30));
+    look.lerpVectors(last.look, V(pos.x, pos.y + 14, pos.z - 10), clamp(e * 3));
+  }
+  return { pos, look };
+}
+
+const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
+let coordT = 0;
+function loop(now) {
+  requestAnimationFrame(loop);
+  if (!W3) return;
+  const T = now * .001, { camera } = W3;
+  mouse.sx += (mouse.x - mouse.sx) * .05; mouse.sy += (mouse.y - mouse.sy) * .05;
+  const { pos, look } = cameraPath(T);
+  camera.position.copy(pos).add(V(mouse.sx * .6, -mouse.sy * .4, 0));
+  camera.lookAt(look);
+  // planetas giram
+  W3.home.userData.sphere.rotation.y = T * .05;
+  W3.home.position.y = (isMobile ? 3.2 : .4) + S.ps * 1.5;
+  W3.planets.forEach((p, i) => { p.obj.userData.sphere.rotation.y = T * (.04 + i * .01); });
+  // hiperespaço conforme a velocidade da rolagem
+  const dy = Math.abs(scrollY - S.lastY); S.lastY = scrollY;
+  S.vel = lerp(S.vel, Math.min(dy / 40, 3), .12);
+  const v = reduce ? 0 : S.vel, speed = .05 + v * 1.5, len = .05 + v * 3.4;
+  const fwd = V(0, 0, -1).applyQuaternion(camera.quaternion);
+  const { wPos, wData, WN } = W3;
+  for (let i = 0; i < WN; i++) {
+    const d = wData[i]; d.z += speed;
+    if (d.z > 2) { d.z -= 92; const a = Math.random() * 6.283, r = 2 + Math.random() * 12; d.x = Math.cos(a) * r; d.y = Math.sin(a) * r * .65; }
+    const j = i * 6, bx = camera.position.x + d.x, by = camera.position.y + d.y, bz = camera.position.z + d.z - 6;
+    wPos[j] = bx; wPos[j + 1] = by; wPos[j + 2] = bz;
+    wPos[j + 3] = bx + fwd.x * len; wPos[j + 4] = by + fwd.y * len; wPos[j + 5] = bz - len;
+  }
+  W3.wGeo.attributes.position.needsUpdate = true;
+  W3.wMat.opacity = clamp(.08 + v * .5, 0, .85);
+  // mira sobre o planeta travado
+  const tg = $("#target");
+  if (S.hold && S.active >= 0) {
+    const p = W3.planets[S.active], v3 = p.obj.position.clone().project(camera);
+    const dist = camera.position.distanceTo(p.obj.position);
+    const rad = p.r / (dist * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) * innerHeight / 2 * 1.25;
+    const x = (v3.x + 1) / 2 * innerWidth, y = (1 - v3.y) / 2 * innerHeight;
+    tg.style.transform = `translate(${x - rad}px,${y - rad}px)`; tg.style.width = tg.style.height = rad * 2 + "px";
+    if (tg.dataset.i != S.active) { const m = M[S.active]; $("#tlbl").innerHTML = `${esc(m.code)}<br><em>dist ${(dist * 1000).toFixed(0)} km</em>`; tg.dataset.i = S.active; }
+    tg.classList.add("on");
+  } else tg.classList.remove("on");
+  if (now - coordT > 120) { coordT = now; $("#coord").textContent = `x ${camera.position.x.toFixed(1)} · z ${camera.position.z.toFixed(1)}`; }
+  W3.renderer.render(W3.scene, camera);
+}
+
+/* ---------- radar ---------- */
+function radar() {
+  const cv = $("#radar"), ctx = cv.getContext("2d");
+  const blips = CONFIG.contacts.map((c, i) => ({ a: (i / CONFIG.contacts.length) * 6.283 + .6, r: .35 + (i % 3) * .2, label: c.label, hit: 0 }));
+  let S0 = 0, vis = false, last = performance.now();
+  new IntersectionObserver(e => { vis = e[0].isIntersecting; }).observe(cv);
+  const fit = () => { const d = Math.min(devicePixelRatio, 2), w = cv.clientWidth || 300; cv.width = cv.height = w * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
+  fit(); addEventListener("resize", fit);
+  (function f(now) {
+    requestAnimationFrame(f);
+    if (!vis) return;
+    const dt = (now - last) / 1000; last = now;
+    const w = cv.clientWidth, c = w / 2, R = c - 4;
+    ctx.clearRect(0, 0, w, w);
+    ctx.strokeStyle = "rgba(160,202,227,.22)"; ctx.lineWidth = 1;
+    for (let k = 1; k <= 4; k++) { ctx.beginPath(); ctx.arc(c, c, R * k / 4, 0, 6.283); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(c - R, c); ctx.lineTo(c + R, c); ctx.moveTo(c, c - R); ctx.lineTo(c, c + R); ctx.stroke();
+    const prev = S0; S0 = (S0 + dt * (reduce ? 0 : 1.4)) % 6.283;
+    // varredura
+    for (let k = 0; k < 40; k++) {
+      const a = S0 - k * .02;
+      ctx.strokeStyle = `rgba(112,173,211,${.5 * (1 - k / 40)})`;
+      ctx.beginPath(); ctx.moveTo(c, c); ctx.lineTo(c + Math.cos(a) * R, c + Math.sin(a) * R); ctx.stroke();
+    }
+    ctx.font = "500 11px 'Chakra Petch'"; ctx.textBaseline = "middle";
+    for (const b of blips) {
+      const crossed = prev < S0 ? (b.a > prev && b.a <= S0) : (b.a > prev || b.a <= S0);
+      if (crossed) b.hit = 1;
+      b.hit = Math.max(.25, b.hit - dt * .35);
+      const x = c + Math.cos(b.a) * R * b.r, y = c + Math.sin(b.a) * R * b.r;
+      ctx.fillStyle = `rgba(160,202,227,${b.hit})`;
+      ctx.beginPath(); ctx.arc(x, y, 3 + b.hit * 3, 0, 6.283); ctx.fill();
+      ctx.strokeStyle = `rgba(160,202,227,${b.hit * .5})`; ctx.beginPath(); ctx.arc(x, y, 6 + (1 - b.hit) * 14, 0, 6.283); ctx.stroke();
+      ctx.fillStyle = `rgba(234,244,251,${.4 + b.hit * .6})`; ctx.fillText(b.label.toUpperCase(), x + 12, y);
+    }
+  })(last);
+}
+
+/* ---------- interações ---------- */
+function ui() {
+  $("#totop").onclick = () => scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  document.addEventListener("click", e => {
+    const a = e.target.closest('a[href^="#"]'); if (!a) return;
+    const el = document.getElementById(a.getAttribute("href").slice(1)); if (!el) return;
+    e.preventDefault(); closeMenu(); el.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+  });
+  const mb = $("#menu-btn"), mn = $("#mnav");
+  function closeMenu() { mn.classList.remove("open"); mb.setAttribute("aria-expanded", "false"); mb.textContent = "Menu"; }
+  mb.onclick = () => { const o = !mn.classList.contains("open"); mn.classList.toggle("open", o); mb.setAttribute("aria-expanded", o); mb.textContent = o ? "Fechar" : "Menu"; };
+  addEventListener("keydown", e => { if (e.key === "Escape") closeMenu(); });
+  $("#freqs").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    $$("#freqs button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    $$(".row").forEach(r => r.classList.toggle("hide", b.dataset.l !== "Todas" && r.dataset.l !== b.dataset.l && r.dataset.l !== "*"));
+  });
+  const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } }), { threshold: .12 });
+  $$(".rv").forEach(el => io.observe(el));
+  const clock = () => $("#clock").textContent = new Date().toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo" });
+  clock(); setInterval(clock, 1000);
+  addEventListener("pointermove", e => { mouse.x = e.clientX / innerWidth - .5; mouse.y = e.clientY / innerHeight - .5; });
+  if (matchMedia("(hover:hover)").matches) {
+    const cur = $(".reticle-cursor"); let x = -100, y = -100, cx = x, cy = y;
+    addEventListener("pointermove", e => { x = e.clientX; y = e.clientY; });
+    (function f() { cx += (x - cx) * .25; cy += (y - cy) * .25; cur.style.left = cx + "px"; cur.style.top = cy + "px"; requestAnimationFrame(f); })();
+    document.addEventListener("pointerover", e => cur.classList.toggle("lock", !!e.target.closest("a,button")));
+  }
+  addEventListener("scroll", onScroll, { passive: true });
+  addEventListener("resize", onScroll);
+}
+
+/* ---------- partida ---------- */
+let started = false;
+function start() {
+  if (started) return; started = true;
+  scramble($("#n1"), CONFIG.name[0].toUpperCase(), 100);
+  scramble($("#n2"), CONFIG.name[1].toUpperCase(), 450).then(typeRoles);
+}
+history.scrollRestoration = "manual"; scrollTo(0, 0);
+const fonts = Promise.all(["800 40px Syne", "500 12px 'Chakra Petch'", "300 16px Sora"].map(f => document.fonts.load(f))).catch(() => {});
+const ready = Promise.all([fonts, loadGitHub()]).then(() => {
+  build();
+  try { W3 = initSpace(); } catch (e) { console.warn("WebGL indisponível", e); }
+  for (const fn of [ui, typeTerminal, radar, onScroll]) { try { fn(); } catch (e) { console.warn(e); } }
+  requestAnimationFrame(loop);
+});
+boot(ready);
+</script>
+</body>
+</html>
