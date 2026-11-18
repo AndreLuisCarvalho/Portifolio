@@ -9,6 +9,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Chakra+Petch:wght@400;500;600&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
+/* cores animáveis: o site muda de paleta conforme o planeta travado */
+@property --c2{syntax:"<color>";inherits:true;initial-value:#3470a6}
+@property --c3{syntax:"<color>";inherits:true;initial-value:#4f8bb8}
+@property --c4{syntax:"<color>";inherits:true;initial-value:#70add3}
+@property --c5{syntax:"<color>";inherits:true;initial-value:#a0cae3}
+:root{transition:--c2 1s ease,--c3 1s ease,--c4 1s ease,--c5 1s ease}
 :root{
   /* paleta: #00223F #154674 #3470A6 #4F8BB8 #70ADD3 #A0CAE3 */
   --c0:#00223f; --c1:#154674; --c2:#3470a6; --c3:#4f8bb8; --c4:#70add3; --c5:#a0cae3;
@@ -57,7 +63,7 @@ img{display:block;max-width:100%}
 .frame i:nth-child(2){top:0;right:0;border-top-width:1px;border-right-width:1px}
 .frame i:nth-child(3){bottom:0;left:0;border-bottom-width:1px;border-left-width:1px}
 .frame i:nth-child(4){bottom:0;right:0;border-bottom-width:1px;border-right-width:1px}
-.topbar{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:flex-start;padding:28px clamp(28px,4vw,48px)}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:flex-start;padding:28px clamp(28px,4vw,48px) 36px;background:linear-gradient(180deg,rgba(0,13,26,.92) 0%,rgba(0,13,26,.6) 60%,transparent 100%)}
 .brand{display:flex;align-items:center;gap:12px}
 .brand b{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:-.02em;width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--panel);backdrop-filter:blur(8px)}
 .brand span{color:var(--muted);line-height:1.6}
@@ -110,7 +116,7 @@ h2.title em{font-style:normal;background:linear-gradient(100deg,var(--c5),var(--
 /* ================= início ================= */
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-top:120px;padding-bottom:110px}
 .hero h1{font-family:var(--display);font-weight:800;font-size:clamp(36px,11vw,190px);line-height:.86;letter-spacing:-.05em;text-transform:uppercase;margin:6px 0 24px}
-.hero h1 span{display:block}
+.hero h1 span{display:block;white-space:nowrap}
 .hero h1 .l2{background:linear-gradient(100deg,var(--c5) 10%,var(--c3) 70%);-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.04em}
 .hero .role{font-family:var(--hud);font-size:clamp(16px,1.8vw,22px);color:var(--c5);min-height:1.6em}
 .hero .role .caret{display:inline-block;width:.55em;height:1.05em;vertical-align:-.15em;background:var(--c4);margin-left:3px;animation:blink 1s steps(1) infinite}
@@ -133,9 +139,10 @@ h2.title em{font-style:normal;background:linear-gradient(100deg,var(--c5),var(--
 /* ================= abertura ================= */
 .saga{height:320vh}
 .sticky{position:sticky;top:0;height:100svh;overflow:hidden}
-.saga-pre{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(560px,calc(100% - 64px));text-align:center;font-family:var(--hud);font-size:clamp(15px,1.7vw,21px);line-height:1.6;color:var(--c4);opacity:var(--pre,0)}
+.saga .sticky::before{content:"";position:absolute;inset:0;background:radial-gradient(70% 60% at 50% 55%,rgba(0,8,18,.82),rgba(0,8,18,.45) 60%,transparent 100%);pointer-events:none}
+.saga-pre{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(620px,calc(100% - 64px));text-align:center;font-family:var(--hud);font-weight:500;font-size:clamp(18px,2.2vw,28px);line-height:1.55;color:var(--c5);text-shadow:0 0 18px rgba(0,8,18,.95),0 0 4px rgba(0,8,18,.9);opacity:var(--pre,0)}
 .crawl{position:absolute;inset:0;perspective:300px;perspective-origin:50% 0%;overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 38%);mask-image:linear-gradient(to bottom,transparent 0%,#000 38%)}
-.crawl-text{position:absolute;left:50%;top:100%;width:min(640px,calc(100% - 72px));transform-origin:50% 0%;transform:translateX(-50%) rotateX(34deg) translateY(var(--cy,0px));color:var(--c5);font-family:var(--body);font-weight:600;font-size:clamp(20px,2.6vw,34px);line-height:1.5;text-align:justify;hyphens:auto;opacity:var(--co,0)}
+.crawl-text{position:absolute;left:50%;top:100%;width:min(640px,calc(100% - 72px));transform-origin:50% 0%;transform:translateX(-50%) rotateX(34deg) translateY(var(--cy,0px));color:#dcefff;text-shadow:0 2px 14px rgba(0,8,18,.9);font-family:var(--body);font-weight:600;font-size:clamp(20px,2.6vw,34px);line-height:1.5;text-align:justify;hyphens:auto;opacity:var(--co,0)}
 .crawl-text h3{font-family:var(--display);text-align:center;font-weight:800;text-transform:uppercase;line-height:1.05;margin-bottom:1.1em}
 .crawl-text h3 small{display:block;font-family:var(--hud);font-weight:500;font-size:.48em;letter-spacing:.24em;margin-bottom:.7em;color:var(--c4)}
 .crawl-text p{margin-bottom:1em}
@@ -165,12 +172,13 @@ h2.title em{font-style:normal;background:linear-gradient(100deg,var(--c5),var(--
 .stats div{background:rgba(0,13,26,.7);padding:16px}
 .stats b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(26px,3vw,40px);color:var(--c5);letter-spacing:-.03em}
 .stats span{color:var(--muted)}
-.orbits{position:relative;width:min(300px,100%);aspect-ratio:1;margin:34px auto 0}
-.orbits .core{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--c5),var(--c2) 60%,var(--c0));box-shadow:0 0 30px var(--c3);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:13px;color:var(--c0)}
-.orbit{position:absolute;left:50%;top:50%;border:1px dashed rgba(160,202,227,.22);border-radius:50%;animation:orbit linear infinite}
+.orbits{position:relative;width:min(480px,100%);aspect-ratio:1;margin:40px auto 0}
+.orbits::before{content:"";position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,rgba(0,13,26,.75) 30%,rgba(0,13,26,.35) 65%,transparent 72%)}
+.orbits .core{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--c5),var(--c2) 60%,var(--c0));box-shadow:0 0 40px var(--c3);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:20px;color:var(--c0)}
+.orbit{position:absolute;left:50%;top:50%;border:1px dashed rgba(160,202,227,.3);border-radius:50%;animation:orbit linear infinite}
 .orbit .moon{position:absolute;left:50%;top:0;transform:translate(-50%,-50%)}
-.orbit .moon i{display:block;width:12px;height:12px;border-radius:50%;margin:0 auto;background:var(--mc);box-shadow:0 0 10px var(--mc)}
-.orbit .moon span{display:block;margin-top:6px;font-family:var(--hud);font-size:10px;letter-spacing:.1em;white-space:nowrap;color:var(--text);animation:orbit linear infinite reverse;animation-duration:inherit}
+.orbit .moon i{display:block;width:18px;height:18px;border-radius:50%;margin:0 auto;background:radial-gradient(circle at 35% 35%,#fff,var(--mc) 55%);box-shadow:0 0 14px var(--mc)}
+.orbit .moon span{display:block;margin-top:8px;padding:4px 10px;border:1px solid var(--line);border-radius:99px;background:rgba(0,13,26,.85);font-family:var(--hud);font-weight:600;font-size:13px;letter-spacing:.08em;white-space:nowrap;color:var(--text);animation:orbit linear infinite reverse;animation-duration:inherit}
 .orbit .moon.b{top:100%}
 @keyframes orbit{to{rotate:360deg}}
 
@@ -195,7 +203,8 @@ h2.title em{font-style:normal;background:linear-gradient(100deg,var(--c5),var(--
 .mpanel h3{font-family:var(--display);font-weight:800;font-size:clamp(30px,4vw,54px);letter-spacing:-.035em;line-height:.95;margin:12px 0 4px;overflow-wrap:anywhere}
 .mpanel .code{color:var(--muted)}
 .mpanel p{line-height:1.6;color:#cfe3f1;margin:14px 0 16px;font-size:15px}
-.mpanel dl{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.mpanel dl{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 18px;margin-bottom:20px}
+.mpanel{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c4) 35%,transparent)}
 .mpanel dt{color:var(--muted);margin-bottom:3px}
 .mpanel dd{font-family:var(--hud);font-size:14px;color:var(--text)}
 .mpanel .actions{margin-top:0}
@@ -243,7 +252,7 @@ h2.title em{font-style:normal;background:linear-gradient(100deg,var(--c5),var(--
 .freq-list a{display:grid;grid-template-columns:88px 120px 1fr auto;gap:12px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);transition:padding .35s var(--ease)}
 .freq-list a span:first-child{color:var(--c4)}
 .freq-list a span:nth-child(2){color:var(--muted)}
-.freq-list a span:nth-child(3){overflow-wrap:anywhere}
+.freq-list a span:nth-child(3){overflow-wrap:anywhere;text-transform:none;letter-spacing:.04em;font-size:14px;color:var(--text)}
 .freq-list a:hover{padding-left:12px}
 .freq-list a:hover span:nth-child(3){color:var(--c5)}
 .radar-wrap{position:relative;width:min(460px,100%);aspect-ratio:1;margin:0 auto}
@@ -442,6 +451,17 @@ const CONFIG = {
     "app": "Aplicação web.",
   },
   hide: [],                 // repositórios para esconder
+  // cada planeta tem um bioma e uma paleta; o site inteiro troca de cor quando a mira trava nele.
+  // os planetas usam os temas na ordem; para escolher, use themeOf: { "nome-do-repo": índice }
+  planetThemes: [
+    { name: "Vulcânico", type: "lava",    colors: ["#1a0605", "#3d0f0a", "#7a2214", "#d4521f", "#ff9a4d", "#ffd2a1"] },
+    { name: "Oceânico",  type: "ocean",   colors: ["#021a24", "#063c4f", "#0d6e86", "#1fa6a0", "#6be0bf", "#c9f7ea"] },
+    { name: "Cristalino",type: "crystal", colors: ["#140a2a", "#2f1a5e", "#5a36a8", "#8c66d9", "#c3a4f5", "#ece2ff"] },
+    { name: "Desértico", type: "desert",  colors: ["#241806", "#563d10", "#94702a", "#c99a45", "#f0cf7a", "#fbeab9"] },
+    { name: "Glacial",   type: "ice",     colors: ["#03202b", "#0b4a5c", "#1f86a0", "#56bfd6", "#a6e7f2", "#eefcff"] },
+    { name: "Gasoso",    type: "gas",     colors: ["#00223f", "#154674", "#3470a6", "#4f8bb8", "#70add3", "#a0cae3"] },
+  ],
+  themeOf: {},
   saga: {
     pre: "Há pouco tempo, num repositório não muito distante…",
     episode: "EPISÓDIO I",
@@ -453,10 +473,10 @@ const CONFIG = {
     ],
   },
   contacts: [
-    { label: "E-mail", value: "seu-email@exemplo.com", href: "mailto:seu-email@exemplo.com" },
+    { label: "E-mail", value: "contato.carvalhodev@gmail.com", href: "mailto:contato.carvalhodev@gmail.com" },
     { label: "GitHub", value: "AndreLuisCarvalho", href: "https://github.com/AndreLuisCarvalho" },
-    { label: "LinkedIn", value: "/in/seu-perfil", href: "https://www.linkedin.com/" },
-    { label: "Instagram", value: "@seuperfil", href: "https://www.instagram.com/" },
+    { label: "LinkedIn", value: "/in/andre-luis-carvalho", href: "https://www.linkedin.com/in/andre-luis-carvalho/" },
+    { label: "Instagram", value: "@mileumalinhas", href: "https://www.instagram.com/mileumalinhas/" },
   ],
   // cópia usada se a API do GitHub não responder
   fallback: {
@@ -481,6 +501,15 @@ const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const isMobile = matchMedia("(max-width: 1000px)").matches;
 const PAL = ["#00223f", "#154674", "#3470a6", "#4f8bb8", "#70add3", "#a0cae3"];
+const BASE_THEME = { name: "Origem", type: "gas", colors: PAL };
+// troca a paleta do site (com transição) para a do planeta travado
+let curTheme = null;
+function applyTheme(th) {
+  if (th === curTheme) return; curTheme = th;
+  const r = document.documentElement.style, c = (th || BASE_THEME).colors;
+  ["--c2", "--c3", "--c4", "--c5"].forEach((v, k) => r.setProperty(v, c[k + 2]));
+  if (W3) W3.wMat.color.set(c[5]);
+}
 const LANG = { JavaScript: "#a0cae3", TypeScript: "#70add3", HTML: "#4f8bb8", CSS: "#70add3", PHP: "#3470a6", Python: "#a0cae3" };
 const ext = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17 17 7M8 7h9v9"/></svg>';
 const fmtDate = d => new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }).replace(/\//g, ".");
@@ -512,6 +541,7 @@ function missions() {
     .filter(r => !r.fork && !r.archived && !hide.has(r.name.toLowerCase()) && r.name.toLowerCase() !== CONFIG.githubUser.toLowerCase())
     .sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at))
     .map((r, i) => ({
+      theme: CONFIG.planetThemes[(CONFIG.themeOf[r.name] ?? i) % CONFIG.planetThemes.length],
       name: r.name, code: code(r.name, i), lang: r.language || "—",
       desc: CONFIG.notes[r.name] || r.description || (r.language ? `Projeto em ${r.language}.` : "Projeto no GitHub."),
       demo: r.homepage || "", repo: r.html_url, date: r.pushed_at, stars: r.stargazers_count || 0,
@@ -543,11 +573,12 @@ function build() {
   const langs = [...new Set([...M.map(m => m.lang).filter(l => l !== "—"), ...CONFIG.extraSkills])].slice(0, 6);
   $("#stats").innerHTML = [[GH.user?.public_repos ?? M.length, "repositórios"], [year - since, "anos de órbita"], [langs.length, "tecnologias"]]
     .map(([n, l]) => `<div><b>${n}</b><span class="hud">${l}</span></div>`).join("");
-  const rings = [[44, 18], [70, 28], [96, 40]];
+  const rings = [[42, 26], [66, 38], [90, 52]];
   $("#orbits").insertAdjacentHTML("beforeend", rings.map(([size, dur], r) => {
     const a = langs[r * 2], b = langs[r * 2 + 1];
     if (!a) return "";
-    const moon = (l, cls, c) => `<div class="moon ${cls}" style="--mc:${c}"><i></i><span style="animation-duration:${dur}s">${esc(l)}</span></div>`;
+    // o rótulo gira ao contrário do anel para ficar sempre de pé
+    const moon = (l, cls, c) => `<div class="moon ${cls}" style="--mc:${c}"><i></i><span style="animation-duration:${dur}s;animation-direction:${r % 2 ? "normal" : "reverse"}">${esc(l)}</span></div>`;
     return `<div class="orbit" style="width:${size}%;height:${size}%;margin:-${size / 2}% 0 0 -${size / 2}%;animation-duration:${dur}s;${r % 2 ? "animation-direction:reverse" : ""}">
       ${moon(a, "", PAL[5 - r])}${b ? moon(b, "b", PAL[4 - r]) : ""}</div>`;
   }).join(""));
@@ -561,7 +592,7 @@ function build() {
       <h3>${esc(m.name)}</h3>
       <div class="code hud">planeta ${esc(m.code)}</div>
       <p>${esc(m.desc)}</p>
-      <dl class="hud"><div><dt>linguagem</dt><dd>${esc(m.lang)}</dd></div><div><dt>último pouso</dt><dd>${fmtDate(m.date)}</dd></div><div><dt>status</dt><dd>${m.demo ? "no ar" : "código aberto"}</dd></div></dl>
+      <dl class="hud"><div><dt>linguagem</dt><dd>${esc(m.lang)}</dd></div><div><dt>bioma</dt><dd>${esc(m.theme.name)}</dd></div><div><dt>último pouso</dt><dd>${fmtDate(m.date)}</dd></div><div><dt>status</dt><dd>${m.demo ? "no ar" : "código aberto"}</dd></div></dl>
       <div class="actions">
         ${m.demo ? `<a class="btn" href="${esc(m.demo)}" target="_blank" rel="noopener">Visitar ${ext}</a>` : ""}
         <a class="btn ${m.demo ? "ghost" : ""}" href="${esc(m.repo)}" target="_blank" rel="noopener">Ver código ${ext}</a>
@@ -680,46 +711,126 @@ function typeTerminal() {
    ESPAÇO 3D
    ===================================================================== */
 function seeded(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
-function planetTexture(seed) {
-  const R = seeded(seed), c = document.createElement("canvas"); c.width = 512; c.height = 256;
-  const x = c.getContext("2d"), off = R() * 6, freq = .02 + R() * .05, shift = Math.floor(R() * 3);
-  for (let y = 0; y < 256; y += 2) {
-    const t = (Math.sin(y * freq + off) + Math.sin(y * freq * 2.7 + off * 2) * .5 + 1.5) / 3;
-    x.fillStyle = PAL[clamp(Math.floor(t * 4) + shift, 0, 5)]; x.fillRect(0, y, 512, 2);
-  }
-  for (let k = 0; k < 500; k++) { x.fillStyle = `rgba(234,244,251,${R() * .09})`; x.fillRect(R() * 512, R() * 256, 20 + R() * 120, 1 + R() * 2); }
-  if (R() > .5) for (let k = 0; k < 3; k++) { // tempestades
-    const sx = R() * 512, sy = 60 + R() * 140, rr = 6 + R() * 16;
-    const g = x.createRadialGradient(sx, sy, 0, sx, sy, rr * 2); g.addColorStop(0, "rgba(160,202,227,.6)"); g.addColorStop(1, "rgba(160,202,227,0)");
-    x.fillStyle = g; x.beginPath(); x.ellipse(sx, sy, rr * 2, rr, 0, 0, 6.283); x.fill();
-  }
-  return new THREE.CanvasTexture(c);
-}
-function ringTexture(seed) {
-  const R = seeded(seed + 7), c = document.createElement("canvas"); c.width = c.height = 512;
+function planetTexture(seed, theme) {
+  const R = seeded(seed), P = theme.colors, c = document.createElement("canvas"); c.width = 1024; c.height = 512;
   const x = c.getContext("2d");
-  for (let r = 160; r < 256; r += 2) { x.strokeStyle = `rgba(160,202,227,${(.1 + R() * .5) * (r < 180 ? .4 : 1)})`; x.lineWidth = 2; x.beginPath(); x.arc(256, 256, r, 0, 6.283); x.stroke(); }
+  let em = null; // textura de brilho próprio (lava)
+  const blob = (cx, cy, r, col, a = 1) => { x.globalAlpha = a; x.fillStyle = col; x.beginPath(); x.ellipse(cx, cy, r * 1.6, r, 0, 0, 6.283); x.fill(); x.globalAlpha = 1; };
+  const crack = (ctx, col, w, n) => {
+    ctx.strokeStyle = col; ctx.lineCap = "round";
+    for (let k = 0; k < n; k++) {
+      let px = R() * 1024, py = 40 + R() * 432; ctx.lineWidth = w * (.4 + R());
+      ctx.beginPath(); ctx.moveTo(px, py);
+      for (let s = 0; s < 14; s++) { px += (R() - .5) * 70; py += (R() - .5) * 40; ctx.lineTo(px, py); }
+      ctx.stroke();
+    }
+  };
+  switch (theme.type) {
+    case "lava": {
+      x.fillStyle = P[1]; x.fillRect(0, 0, 1024, 512);
+      for (let k = 0; k < 260; k++) blob(R() * 1024, R() * 512, 6 + R() * 40, R() > .5 ? P[0] : P[2], .55);
+      const e = document.createElement("canvas"); e.width = 1024; e.height = 512;
+      const ex = e.getContext("2d"); ex.fillStyle = "#000"; ex.fillRect(0, 0, 1024, 512);
+      ex.shadowColor = P[4]; ex.shadowBlur = 10;
+      crack(ex, P[4], 4, 40); crack(ex, P[5], 1.5, 30);
+      for (let k = 0; k < 18; k++) { const g = ex.createRadialGradient(0, 0, 0, 0, 0, 30); g.addColorStop(0, P[4]); g.addColorStop(1, "rgba(0,0,0,0)"); ex.save(); ex.translate(R() * 1024, R() * 512); ex.fillStyle = g; ex.fillRect(-30, -30, 60, 60); ex.restore(); }
+      x.globalAlpha = .9; x.drawImage(e, 0, 0); x.globalAlpha = 1;
+      em = new THREE.CanvasTexture(e);
+      break;
+    }
+    case "ocean": {
+      const g = x.createLinearGradient(0, 0, 0, 512); g.addColorStop(0, P[2]); g.addColorStop(.5, P[1]); g.addColorStop(1, P[2]);
+      x.fillStyle = g; x.fillRect(0, 0, 1024, 512);
+      for (let k = 0; k < 7; k++) { // continentes
+        const cx = R() * 1024, cy = 110 + R() * 290;
+        for (let j = 0; j < 40; j++) blob(cx + (R() - .5) * 180, cy + (R() - .5) * 90, 8 + R() * 30, j % 3 ? P[3] : P[4], .9);
+      }
+      x.fillStyle = P[5]; x.fillRect(0, 0, 1024, 26); x.fillRect(0, 486, 1024, 26);
+      break;
+    }
+    case "crystal": {
+      x.fillStyle = P[1]; x.fillRect(0, 0, 1024, 512);
+      for (let k = 0; k < 420; k++) {
+        const cx = R() * 1024, cy = R() * 512, s = 10 + R() * 50;
+        x.fillStyle = P[1 + Math.floor(R() * 5)]; x.globalAlpha = .35 + R() * .5;
+        x.beginPath(); x.moveTo(cx, cy - s); x.lineTo(cx + s * .7, cy + s * (R() - .2)); x.lineTo(cx - s * .7, cy + s * (R() - .2)); x.closePath(); x.fill();
+      }
+      x.globalAlpha = 1; crack(x, P[5], 1, 25);
+      break;
+    }
+    case "desert": {
+      for (let y = 0; y < 512; y += 2) { const t = (Math.sin(y * .03 + seed) + Math.sin(y * .11) * .3 + 1.3) / 2.6; x.fillStyle = P[clamp(Math.floor(t * 3) + 2, 2, 4)]; x.fillRect(0, y, 1024, 2); }
+      for (let k = 0; k < 70; k++) { // crateras
+        const cx = R() * 1024, cy = R() * 512, r = 4 + R() * 22;
+        x.fillStyle = P[1]; x.globalAlpha = .45; x.beginPath(); x.arc(cx, cy, r, 0, 6.283); x.fill();
+        x.strokeStyle = P[5]; x.globalAlpha = .5; x.lineWidth = 1.5; x.beginPath(); x.arc(cx - 1, cy - 1, r, 3.6, 5.8); x.stroke();
+      }
+      x.globalAlpha = 1;
+      break;
+    }
+    case "ice": {
+      x.fillStyle = P[4]; x.fillRect(0, 0, 1024, 512);
+      for (let k = 0; k < 200; k++) blob(R() * 1024, R() * 512, 8 + R() * 40, R() > .5 ? P[3] : P[5], .4);
+      crack(x, P[2], 2, 45);
+      x.fillStyle = P[5]; x.fillRect(0, 0, 1024, 60); x.fillRect(0, 452, 1024, 60);
+      break;
+    }
+    default: { // gasoso
+      const off = R() * 6, freq = .01 + R() * .025;
+      for (let y = 0; y < 512; y += 2) { const t = (Math.sin(y * freq + off) + Math.sin(y * freq * 2.7 + off * 2) * .5 + 1.5) / 3; x.fillStyle = P[clamp(Math.floor(t * 5) + 1, 0, 5)]; x.fillRect(0, y, 1024, 2); }
+      for (let k = 0; k < 3; k++) { const sx = R() * 1024, sy = 140 + R() * 240, rr = 12 + R() * 26; const g = x.createRadialGradient(sx, sy, 0, sx, sy, rr * 2); g.addColorStop(0, P[5]); g.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = g; x.beginPath(); x.ellipse(sx, sy, rr * 2, rr, 0, 0, 6.283); x.fill(); }
+    }
+  }
+  for (let k = 0; k < 500; k++) { x.fillStyle = `rgba(255,255,255,${R() * .05})`; x.fillRect(R() * 1024, R() * 512, 20 + R() * 120, 1 + R() * 2); }
+  return { map: new THREE.CanvasTexture(c), em };
+}
+function cloudTexture(seed) {
+  const R = seeded(seed + 3), c = document.createElement("canvas"); c.width = 1024; c.height = 512;
+  const x = c.getContext("2d");
+  for (let k = 0; k < 160; k++) { x.globalAlpha = .08 + R() * .25; x.fillStyle = "#fff"; x.beginPath(); x.ellipse(R() * 1024, 40 + R() * 432, 30 + R() * 90, 6 + R() * 14, 0, 0, 6.283); x.fill(); }
   return new THREE.CanvasTexture(c);
 }
-let glowTex;
-function makePlanet(radius, seed, ring) {
-  const g = new THREE.Group();
-  if (!glowTex) {
-    const c = document.createElement("canvas"); c.width = c.height = 256;
-    const x = c.getContext("2d"), gr = x.createRadialGradient(128, 128, 50, 128, 128, 128);
-    gr.addColorStop(0, "rgba(112,173,211,.55)"); gr.addColorStop(1, "rgba(112,173,211,0)");
-    x.fillStyle = gr; x.fillRect(0, 0, 256, 256); glowTex = new THREE.CanvasTexture(c);
-  }
-  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
-  glow.scale.set(radius * 3.4, radius * 3.4, 1);
-  const sphere = new THREE.Mesh(new THREE.SphereGeometry(radius, 48, 32), new THREE.MeshLambertMaterial({ map: planetTexture(seed) }));
+function ringTexture(seed, col) {
+  const R = seeded(seed + 7), c = document.createElement("canvas"); c.width = c.height = 512;
+  const x = c.getContext("2d"), k = new THREE.Color(col), rgb = `${k.r * 255 | 0},${k.g * 255 | 0},${k.b * 255 | 0}`;
+  for (let r = 160; r < 256; r += 2) { x.strokeStyle = `rgba(${rgb},${(.1 + R() * .5) * (r < 180 ? .4 : 1)})`; x.lineWidth = 2; x.beginPath(); x.arc(256, 256, r, 0, 6.283); x.stroke(); }
+  return new THREE.CanvasTexture(c);
+}
+function glowTexture(col) {
+  const c = document.createElement("canvas"); c.width = c.height = 256;
+  const x = c.getContext("2d"), k = new THREE.Color(col), rgb = `${k.r * 255 | 0},${k.g * 255 | 0},${k.b * 255 | 0}`;
+  const gr = x.createRadialGradient(128, 128, 50, 128, 128, 128);
+  gr.addColorStop(0, `rgba(${rgb},.6)`); gr.addColorStop(1, `rgba(${rgb},0)`);
+  x.fillStyle = gr; x.fillRect(0, 0, 256, 256); return new THREE.CanvasTexture(c);
+}
+// opts: ring, moons (quantidade), clouds
+function makePlanet(radius, seed, theme, opts = {}) {
+  const g = new THREE.Group(), P = theme.colors;
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(P[4]), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+  glow.scale.set(radius * 3.6, radius * 3.6, 1);
+  const tex = planetTexture(seed, theme);
+  const mat = new THREE.MeshLambertMaterial({ map: tex.map });
+  if (tex.em) { mat.emissive = new THREE.Color(0xffffff); mat.emissiveMap = tex.em; mat.emissiveIntensity = .9; }
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(radius, 64, 40), mat);
   sphere.rotation.z = .2;
   g.add(glow, sphere);
-  if (ring) {
-    const rm = new THREE.Mesh(new THREE.RingGeometry(radius * 1.25, radius * 2.05, 96), new THREE.MeshBasicMaterial({ map: ringTexture(seed), transparent: true, side: THREE.DoubleSide, depthWrite: false }));
+  let clouds = null;
+  if (opts.clouds) {
+    clouds = new THREE.Mesh(new THREE.SphereGeometry(radius * 1.025, 48, 32), new THREE.MeshLambertMaterial({ map: cloudTexture(seed), transparent: true, depthWrite: false }));
+    g.add(clouds);
+  }
+  if (opts.ring) {
+    const rm = new THREE.Mesh(new THREE.RingGeometry(radius * 1.25, radius * 2.05, 96), new THREE.MeshBasicMaterial({ map: ringTexture(seed, P[5]), transparent: true, side: THREE.DoubleSide, depthWrite: false }));
     rm.rotation.x = Math.PI * .42; rm.rotation.y = -.3; g.add(rm);
   }
-  g.userData = { sphere, radius };
+  const moons = [];
+  for (let k = 0; k < (opts.moons || 0); k++) {
+    const mr = radius * (.12 + k * .06);
+    const mm = new THREE.Mesh(new THREE.SphereGeometry(mr, 24, 16), new THREE.MeshLambertMaterial({ color: P[5 - k] }));
+    mm.userData = { d: radius * (1.9 + k * .7), s: .5 - k * .15, o: k * 2.2, tilt: .3 + k * .25 };
+    g.add(mm); moons.push(mm);
+  }
+  g.userData = { sphere, radius, clouds, moons };
   return g;
 }
 
@@ -764,14 +875,15 @@ function initSpace() {
   });
 
   // planeta de abertura
-  const home = makePlanet(2.6, 99, true);
+  const home = makePlanet(2.6, 99, BASE_THEME, { ring: true });
   if (isMobile) home.position.set(1.4, 3.2, -7); else home.position.set(4.6, .4, -5);
   scene.add(home);
 
   // planetas das missões
   const planets = M.map((m, i) => {
     const r = 2.2 + (i % 3) * .5, side = i % 2 ? 1 : -1;
-    const p = makePlanet(r, 1000 + i * 137, i % 2 === 0);
+    const look = { lava: { moons: 1 }, ocean: { clouds: true, moons: 1 }, crystal: { ring: true, moons: 2 }, desert: { moons: 2 }, ice: { ring: true }, gas: { ring: true, moons: 1 } }[m.theme.type] || {};
+    const p = makePlanet(r, 1000 + i * 137, m.theme, look);
     p.position.set(side * (6 + (i % 3) * 2), ((i % 3) - 1) * 3, -70 - i * 48);
     scene.add(p);
     const off = isMobile ? new THREE.Vector3(0, -r * .95, r * 4.6) : new THREE.Vector3(-r * 1.5, r * .3, r * 3.8);
@@ -813,6 +925,7 @@ function onScroll() {
   $$(".mpanel").forEach((p, i) => p.classList.toggle("on", S.hold && i === k));
   $$("#minimap div").forEach((d, i) => d.classList.toggle("on", inside && i === k));
   $("#mhead").style.opacity = inside ? 1 : 0;
+  applyTheme(inside && n ? M[k].theme : null);
   // sabre
   const blade = $("#blade");
   blade.style.setProperty("--sp", clamp(scrollY / (maxY || 1)));
@@ -867,8 +980,16 @@ function loop(now) {
   // planetas giram
   W3.home.userData.sphere.rotation.y = T * .05;
   W3.home.position.y = (isMobile ? 3.2 : .4) + S.ps * 1.5;
-  W3.planets.forEach((p, i) => { p.obj.userData.sphere.rotation.y = T * (.04 + i * .01); });
-  // hiperespaço conforme a velocidade da rolagem
+  // planetas das missões só aparecem perto da viagem, para não poluir o início
+  const showP = S.pa > .88 || S.pm > 0;
+  W3.planets.forEach((p, i) => {
+    p.obj.visible = showP;
+    if (!showP) return;
+    const u = p.obj.userData;
+    u.sphere.rotation.y = T * (.04 + i * .01);
+    if (u.clouds) u.clouds.rotation.y = T * .07;
+    u.moons.forEach(mm => { const d = mm.userData, a = T * d.s + d.o; mm.position.set(Math.cos(a) * d.d, Math.sin(a) * d.d * d.tilt, Math.sin(a) * d.d); });
+  });  // hiperespaço conforme a velocidade da rolagem
   const dy = Math.abs(scrollY - S.lastY); S.lastY = scrollY;
   S.vel = lerp(S.vel, Math.min(dy / 40, 3), .12);
   const v = reduce ? 0 : S.vel, speed = .05 + v * 1.5, len = .05 + v * 3.4;
@@ -968,6 +1089,21 @@ function ui() {
   addEventListener("resize", onScroll);
 }
 
+/* ---------- nome sempre cabendo na largura ---------- */
+function fitName() {
+  const h = $(".hero h1");
+  h.style.fontSize = "";
+  const base = parseFloat(getComputedStyle(h).fontSize), avail = h.clientWidth;
+  let widest = 0;
+  for (const t of CONFIG.name) {
+    const m = document.createElement("span");
+    m.style.cssText = "position:absolute;visibility:hidden;white-space:nowrap;display:inline";
+    m.textContent = t.toUpperCase(); h.appendChild(m);
+    widest = Math.max(widest, m.getBoundingClientRect().width); m.remove();
+  }
+  if (widest > avail * .97) h.style.fontSize = Math.floor(base * avail * .97 / widest) + "px";
+}
+
 /* ---------- partida ---------- */
 let started = false;
 function start() {
@@ -979,6 +1115,7 @@ history.scrollRestoration = "manual"; scrollTo(0, 0);
 const fonts = Promise.all(["800 40px Syne", "500 12px 'Chakra Petch'", "300 16px Sora"].map(f => document.fonts.load(f))).catch(() => {});
 const ready = Promise.all([fonts, loadGitHub()]).then(() => {
   build();
+  fitName(); addEventListener("resize", fitName);
   try { W3 = initSpace(); } catch (e) { console.warn("WebGL indisponível", e); }
   for (const fn of [ui, typeTerminal, radar, onScroll]) { try { fn(); } catch (e) { console.warn(e); } }
   requestAnimationFrame(loop);
