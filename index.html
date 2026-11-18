@@ -262,14 +262,29 @@ h2.title em{font-style:normal;background:linear-gradient(100deg,var(--c5),var(--
 /* ================= rodapé ================= */
 footer{position:relative;z-index:2;overflow:hidden;padding-top:80px}
 .horizon{position:absolute;left:50%;bottom:-120vw;width:150vw;height:150vw;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle at 50% 0%,var(--c1),var(--c0) 30%,#000d1a 60%);box-shadow:0 -6px 40px rgba(112,173,211,.55),0 -2px 0 var(--c4) inset;pointer-events:none}
-.foot{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:40px;align-items:center;padding-bottom:44px}
-.badge{width:150px;height:150px;position:relative}
+.foot{position:relative;display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.2fr);gap:40px clamp(24px,4vw,64px);align-items:start;padding-bottom:48px}
+.foot-brand{display:flex;gap:26px;align-items:center}
+.foot-brand .who{min-width:0}
+.foot-brand .who p{color:var(--muted);font-size:14px;line-height:1.6;margin:10px 0 12px;max-width:34ch}
+.foot-col h4{font-weight:600;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--c4);margin:6px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.foot-col nav{display:flex;flex-direction:column;gap:10px}
+.foot-col nav a{color:var(--muted);font-size:14px;transition:color .2s,transform .2s;width:fit-content}
+.foot-col nav a:hover{color:var(--c5);transform:translateX(4px)}
+.foot-status{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:12px;font-size:14px;color:var(--muted)}
+.foot-status li{display:block;line-height:1.5}
+.foot-status li b{color:var(--text);font-weight:500}
+.foot-status .live{width:8px;height:8px;border-radius:50%;background:#6fe08a;box-shadow:0 0 0 0 rgba(111,224,138,.6);animation:live 2s infinite;display:inline-block;margin-right:10px;vertical-align:1px}
+@keyframes live{70%{box-shadow:0 0 0 8px rgba(111,224,138,0)}100%{box-shadow:0 0 0 0 rgba(111,224,138,0)}}
+.foot-bottom{position:relative;display:flex;align-items:center;gap:28px;padding-top:28px;padding-bottom:48px;border-top:1px solid var(--line)}
+.foot-copy{flex:1;margin:0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.foot-top{color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;transition:color .2s}
+.foot-top:hover{color:var(--c5)}
+.badge{width:150px;height:150px;position:relative;flex:none}
 .badge svg{width:100%;height:100%;animation:orbit 22s linear infinite}
 .badge svg text{font-family:var(--hud);font-size:10.5px;letter-spacing:3px;fill:var(--c5);text-transform:uppercase}
 .badge b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:30px}
 /* assinatura M1L! | ACM */
-.sig-wrap{position:relative;display:flex;justify-content:center;padding:0 16px 56px}
-.sig{display:inline-flex;align-items:center;gap:22px;padding:16px 30px;border-radius:22px;background:#06101a;border:1px solid rgba(160,202,227,.14);box-shadow:0 10px 40px rgba(0,0,0,.55);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
+.sig{flex:none;display:inline-flex;align-items:center;gap:22px;padding:16px 30px;border-radius:22px;background:#06101a;border:1px solid rgba(160,202,227,.14);box-shadow:0 10px 40px rgba(0,0,0,.55);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
 .sig:hover{transform:translateY(-4px) scale(1.03);border-color:var(--c4);box-shadow:0 14px 50px rgba(0,0,0,.6),0 0 30px color-mix(in srgb,var(--c4) 45%,transparent)}
 .sig-m,.sig-acm{font-family:"Archivo Black",var(--display);font-weight:400;line-height:1;white-space:nowrap;-webkit-background-clip:text;background-clip:text;color:transparent}
 .sig-m{font-size:44px;letter-spacing:-.05em;transform:skewX(-6deg);
@@ -287,10 +302,10 @@ footer{position:relative;z-index:2;overflow:hidden;padding-top:80px}
 @media(max-width:600px){.sig{gap:14px;padding:12px 20px;border-radius:16px}.sig-m{font-size:32px}.sig-acm{font-size:24px}}
 @media(prefers-reduced-motion:reduce){.sig-acm{animation:none}}
 .foot .who b{display:block;font-family:var(--display);font-weight:600;font-size:clamp(20px,2.2vw,28px)}
-.foot .who span{display:block;color:var(--muted);margin-top:8px}
-.foot nav{display:flex;flex-direction:column;gap:8px;text-align:right}
-.foot nav a,.foot nav button{color:var(--muted);transition:color .2s;text-align:right}
-.foot nav a:hover,.foot nav button:hover{color:var(--c5)}
+.foot .who span{display:block;color:var(--c5);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+@media(max-width:1100px){.foot{grid-template-columns:repeat(3,minmax(0,1fr))}.foot-brand{grid-column:1/-1}}
+@media(max-width:700px){.foot{grid-template-columns:1fr 1fr;gap:32px 24px}.foot-col:last-child{grid-column:1/-1}.foot-brand{flex-direction:column;align-items:flex-start;gap:16px}.badge{width:110px;height:110px}
+  .foot-bottom{flex-wrap:wrap;gap:18px}.foot-copy{flex-basis:100%;order:3}}
 
 /* revelar */
 .rv{opacity:0;transform:translateY(36px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
@@ -310,8 +325,6 @@ footer{position:relative;z-index:2;overflow:hidden;padding-top:80px}
   .mhead,.altimeter,.mpanel{left:28px}
   .row{grid-template-columns:70px 1fr auto;grid-template-areas:"reg name links" "date lang lang"}
   .row .reg{grid-area:reg}.row .date{grid-area:date}.row .name{grid-area:name}.row .lang{grid-area:lang}.row .links{grid-area:links}
-  .foot{grid-template-columns:1fr;justify-items:start}
-  .foot nav{text-align:left}.foot nav a,.foot nav button{text-align:left}
   .telemetry{display:none}
   .menu-btn{display:block;pointer-events:auto}
 }
@@ -429,18 +442,24 @@ footer{position:relative;z-index:2;overflow:hidden;padding-top:80px}
 <footer>
   <div class="horizon" aria-hidden="true"></div>
   <div class="foot wrap">
-    <div class="badge" aria-hidden="true">
-      <svg viewBox="0 0 150 150"><defs><path id="circ" d="M75,75 m-58,0 a58,58 0 1,1 116,0 a58,58 0 1,1 -116,0"/></defs>
-        <text><textPath href="#circ" id="badge-text">andré carvalho · dev · em órbita · </textPath></text></svg>
-      <b id="badge-ini">AC</b>
+    <div class="foot-brand">
+      <div class="badge" aria-hidden="true">
+        <svg viewBox="0 0 150 150"><defs><path id="circ" d="M75,75 m-58,0 a58,58 0 1,1 116,0 a58,58 0 1,1 -116,0"/></defs>
+          <text><textPath href="#circ" id="badge-text">andré carvalho · dev · em órbita · </textPath></text></svg>
+        <b id="badge-ini">AC</b>
+      </div>
+      <div class="who"><b id="foot-name"></b><p id="foot-bio"></p><span class="hud">Que o deploy esteja com você</span></div>
     </div>
-    <div class="who"><b id="foot-name"></b><span class="hud">Que o deploy esteja com você · <span id="foot-year"></span></span></div>
-    <nav class="hud" id="foot-nav"></nav>
+    <div class="foot-col"><h4 class="hud">Navegação</h4><nav id="foot-sec"></nav></div>
+    <div class="foot-col"><h4 class="hud">Canais</h4><nav id="foot-nav"></nav></div>
+    <div class="foot-col"><h4 class="hud">Status da nave</h4><ul class="foot-status" id="foot-status"></ul></div>
   </div>
-  <div class="sig-wrap">
+  <div class="foot-bottom wrap">
     <a class="sig" href="mailto:contato.carvalhodev@gmail.com" aria-label="M1L! ACM: enviar e-mail">
       <span class="sig-m">M1L<i>!</i></span><span class="sig-bar"></span><span class="sig-acm">ACM</span>
     </a>
+    <p class="foot-copy hud">© <span id="foot-year"></span> <span id="foot-full"></span> · feito à mão com HTML, CSS, JavaScript e three.js</p>
+    <button class="foot-top hud" id="totop">↑ voltar à origem</button>
   </div>
 </footer>
 
@@ -456,6 +475,12 @@ const CONFIG = {
   initials: "AC",
   roles: ["Desenvolvedor full stack", "Criador de interfaces", "Construtor de sistemas", "Explorador de novas rotas"],
   intro: "Construo sites, sistemas e APIs do primeiro esboço ao deploy. Este é o meu diário de bordo: cada repositório é um planeta visitado.",
+  // rodapé
+  footer: {
+    bio: "Desenvolvedor full stack. Sites, sistemas e APIs do primeiro esboço ao deploy.",
+    status: "Disponível para novos projetos",
+    base: "São Paulo, Brasil · UTC-3",
+  },
   // texto do terminal na seção "tripulante" (linhas que começam com > aparecem como comando)
   about: [
     "> identificar --tripulante",
@@ -652,7 +677,17 @@ function build() {
   $("#foot-name").textContent = CONFIG.fullName;
   $("#foot-year").textContent = year;
   $("#badge-text").textContent = `${CONFIG.name.join(" ")} · dev · em órbita · `;
-  $("#foot-nav").innerHTML = CONFIG.contacts.filter(c => !c.href.startsWith("mailto:")).map(c => `<a href="${esc(c.href)}" target="_blank" rel="noopener">${esc(c.label)} ↗</a>`).join("") + `<button id="totop">↑ voltar à origem</button>`;
+  $("#foot-full").textContent = CONFIG.fullName;
+  $("#foot-bio").textContent = CONFIG.footer.bio;
+  $("#foot-sec").innerHTML = SECTIONS.map(([id, l]) => `<a href="#${id}">${esc(l)}</a>`).join("");
+  $("#foot-nav").innerHTML = CONFIG.contacts.map(c => `<a href="${esc(c.href)}" ${c.href.startsWith("mailto:") ? "" : 'target="_blank" rel="noopener"'}>${esc(c.label)} ${c.href.startsWith("mailto:") ? "✉" : "↗"}</a>`).join("");
+  const last = M[0];
+  $("#foot-status").innerHTML = [
+    `<i class="live"></i><b>${esc(CONFIG.footer.status)}</b>`,
+    `base · <b>${esc(CONFIG.footer.base)}</b>`,
+    `<b>${M.length}</b> planetas mapeados · <b>${langs.length}</b> tecnologias`,
+    last ? `último pouso · <b>${esc(last.name)}</b> em ${fmtDate(last.date)}` : ""
+  ].filter(Boolean).map(s => `<li>${s}</li>`).join("");
 }
 
 /* ---------- boot: salto para o hiperespaço ---------- */
