@@ -356,7 +356,7 @@ footer{position:relative;z-index:2;overflow:hidden;padding-top:80px}
 
 <header class="topbar">
   <a href="#inicio" class="brand"><b id="brand-ini">AC</b><span class="hud"><em id="brand-name">André Carvalho</em><br>diário de bordo</span></a>
-  <div class="telemetry hud"><span id="clock">--:--:--</span> · SP<br>coord <em id="coord">z 0.0</em></div>
+  <div class="telemetry hud"><span id="clock">--:--:--</span> · CGB<br>coord <em id="coord">z 0.0</em></div>
   <button class="menu-btn hud" id="menu-btn" aria-expanded="false" aria-controls="mnav">Menu</button>
 </header>
 
@@ -479,7 +479,7 @@ const CONFIG = {
   footer: {
     bio: "Desenvolvedor full stack. Sites, sistemas e APIs do primeiro esboço ao deploy.",
     status: "Disponível para novos projetos",
-    base: "São Paulo, Brasil · UTC-3",
+    base: "Cuiabá, MT · UTC-4",
   },
   // texto do terminal na seção "tripulante" (linhas que começam com > aparecem como comando)
   about: [
@@ -1140,7 +1140,7 @@ function ui() {
   });
   const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } }), { threshold: .12 });
   $$(".rv").forEach(el => io.observe(el));
-  const clock = () => $("#clock").textContent = new Date().toLocaleTimeString("pt-BR", { timeZone: "America/Sao_Paulo" });
+  const clock = () => $("#clock").textContent = new Date().toLocaleTimeString("pt-BR", { timeZone: "America/Cuiaba" });
   clock(); setInterval(clock, 1000);
   addEventListener("pointermove", e => { mouse.x = e.clientX / innerWidth - .5; mouse.y = e.clientY / innerHeight - .5; });
   if (matchMedia("(hover:hover)").matches) {
