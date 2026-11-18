@@ -172,14 +172,14 @@ h2.title em{font-style:normal;background:linear-gradient(100deg,var(--c5),var(--
 .stats div{background:rgba(0,13,26,.7);padding:16px}
 .stats b{display:block;font-family:var(--display);font-weight:800;font-size:clamp(26px,3vw,40px);color:var(--c5);letter-spacing:-.03em}
 .stats span{color:var(--muted)}
-.orbits{position:relative;width:min(480px,100%);aspect-ratio:1;margin:40px auto 0}
+.orbits{position:relative;width:min(540px,100%);aspect-ratio:1;margin:40px auto 0}
+@media(max-width:600px){.orbit .moon span{font-size:10px;padding:3px 7px;margin-top:5px}.orbit .moon i{width:12px;height:12px}}
 .orbits::before{content:"";position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,rgba(0,13,26,.75) 30%,rgba(0,13,26,.35) 65%,transparent 72%)}
 .orbits .core{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--c5),var(--c2) 60%,var(--c0));box-shadow:0 0 40px var(--c3);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:20px;color:var(--c0)}
 .orbit{position:absolute;left:50%;top:50%;border:1px dashed rgba(160,202,227,.3);border-radius:50%;animation:orbit linear infinite}
 .orbit .moon{position:absolute;left:50%;top:0;transform:translate(-50%,-50%)}
 .orbit .moon i{display:block;width:18px;height:18px;border-radius:50%;margin:0 auto;background:radial-gradient(circle at 35% 35%,#fff,var(--mc) 55%);box-shadow:0 0 14px var(--mc)}
 .orbit .moon span{display:block;margin-top:8px;padding:4px 10px;border:1px solid var(--line);border-radius:99px;background:rgba(0,13,26,.85);font-family:var(--hud);font-weight:600;font-size:13px;letter-spacing:.08em;white-space:nowrap;color:var(--text);animation:orbit linear infinite reverse;animation-duration:inherit}
-.orbit .moon.b{top:100%}
 @keyframes orbit{to{rotate:360deg}}
 
 /* ================= missões (planetas) ================= */
@@ -441,7 +441,7 @@ const CONFIG = {
     "> status",
     "Disponível para novas missões.",
   ],
-  extraSkills: ["Node.js", "SQL", "Git"],   // somadas às linguagens que vêm do GitHub
+  extraSkills: ["Node.js", "SQL", "Git", "Ruby on Rails", "Java", "Angular", "React", "SCSS"],   // somadas às linguagens que vêm do GitHub
   // descrição de cada repositório (o GitHub da maioria está sem descrição)
   notes: {
     "HubRPG": "Projeto em JavaScript com API publicada na Vercel.",
@@ -570,17 +570,22 @@ function build() {
   $("#holo-img").src = $("#holo-img2").src = av + (av.includes("?") ? "&" : "?") + "s=400";
   const since = new Date(GH.user?.created_at || CONFIG.fallback.user.created_at).getFullYear();
   $("#holo-id").textContent = `tripulante · em órbita desde ${since}`;
-  const langs = [...new Set([...M.map(m => m.lang).filter(l => l !== "—"), ...CONFIG.extraSkills])].slice(0, 6);
+  const langs = [...new Set([...M.map(m => m.lang).filter(l => l !== "—"), ...CONFIG.extraSkills])];
   $("#stats").innerHTML = [[GH.user?.public_repos ?? M.length, "repositórios"], [year - since, "anos de órbita"], [langs.length, "tecnologias"]]
     .map(([n, l]) => `<div><b>${n}</b><span class="hud">${l}</span></div>`).join("");
-  const rings = [[42, 26], [66, 38], [90, 52]];
+  // as tecnologias se dividem entre os anéis conforme o tamanho de cada um
+  const rings = [[38, 30], [64, 44], [92, 60]], tot = rings.reduce((t, r) => t + r[0], 0);
+  let li = 0;
   $("#orbits").insertAdjacentHTML("beforeend", rings.map(([size, dur], r) => {
-    const a = langs[r * 2], b = langs[r * 2 + 1];
-    if (!a) return "";
+    const n = r === rings.length - 1 ? langs.length - li : Math.round(langs.length * size / tot);
+    const list = langs.slice(li, li += n);
+    if (!list.length) return "";
     // o rótulo gira ao contrário do anel para ficar sempre de pé
-    const moon = (l, cls, c) => `<div class="moon ${cls}" style="--mc:${c}"><i></i><span style="animation-duration:${dur}s;animation-direction:${r % 2 ? "normal" : "reverse"}">${esc(l)}</span></div>`;
-    return `<div class="orbit" style="width:${size}%;height:${size}%;margin:-${size / 2}% 0 0 -${size / 2}%;animation-duration:${dur}s;${r % 2 ? "animation-direction:reverse" : ""}">
-      ${moon(a, "", PAL[5 - r])}${b ? moon(b, "b", PAL[4 - r]) : ""}</div>`;
+    const moons = list.map((l, k) => {
+      const a = (k / list.length) * 6.283 + r * .9 - 1.571;
+      return `<div class="moon" style="--mc:${PAL[5 - (k + r) % 3]};left:${50 + 50 * Math.cos(a)}%;top:${50 + 50 * Math.sin(a)}%"><i></i><span style="animation-duration:${dur}s;animation-direction:${r % 2 ? "normal" : "reverse"}">${esc(l)}</span></div>`;
+    }).join("");
+    return `<div class="orbit" style="width:${size}%;height:${size}%;margin:-${size / 2}% 0 0 -${size / 2}%;animation-duration:${dur}s;${r % 2 ? "animation-direction:reverse" : ""}">${moons}</div>`;
   }).join(""));
   // missões
   $("#missoes").style.height = (M.length * 120 + 100) + "vh";
