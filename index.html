@@ -7,7 +7,7 @@
 <meta name="description" content="Portfólio de André Carvalho — desenvolvimento web, sistemas e interfaces.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Chakra+Petch:wght@400;500;600&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Syne:wght@600;800&family=Chakra+Petch:wght@400;500;600&family=Sora:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 /* cores animáveis: o site muda de paleta conforme o planeta travado */
 @property --c2{syntax:"<color>";inherits:true;initial-value:#3470a6}
@@ -262,11 +262,30 @@ h2.title em{font-style:normal;background:linear-gradient(100deg,var(--c5),var(--
 /* ================= rodapé ================= */
 footer{position:relative;z-index:2;overflow:hidden;padding-top:80px}
 .horizon{position:absolute;left:50%;bottom:-120vw;width:150vw;height:150vw;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle at 50% 0%,var(--c1),var(--c0) 30%,#000d1a 60%);box-shadow:0 -6px 40px rgba(112,173,211,.55),0 -2px 0 var(--c4) inset;pointer-events:none}
-.foot{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:40px;align-items:center;padding-bottom:70px}
+.foot{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:40px;align-items:center;padding-bottom:44px}
 .badge{width:150px;height:150px;position:relative}
 .badge svg{width:100%;height:100%;animation:orbit 22s linear infinite}
 .badge svg text{font-family:var(--hud);font-size:10.5px;letter-spacing:3px;fill:var(--c5);text-transform:uppercase}
 .badge b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:30px}
+/* assinatura M1L! | ACM */
+.sig-wrap{position:relative;display:flex;justify-content:center;padding:0 16px 56px}
+.sig{display:inline-flex;align-items:center;gap:22px;padding:16px 30px;border-radius:22px;background:#06101a;border:1px solid rgba(160,202,227,.14);box-shadow:0 10px 40px rgba(0,0,0,.55);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
+.sig:hover{transform:translateY(-4px) scale(1.03);border-color:var(--c4);box-shadow:0 14px 50px rgba(0,0,0,.6),0 0 30px color-mix(in srgb,var(--c4) 45%,transparent)}
+.sig-m,.sig-acm{font-family:"Archivo Black",var(--display);font-weight:400;line-height:1;white-space:nowrap;-webkit-background-clip:text;background-clip:text;color:transparent}
+.sig-m{font-size:44px;letter-spacing:-.05em;transform:skewX(-6deg);
+  background-image:linear-gradient(178deg,#f4f8fb 0%,#b8c7d4 22%,#6c8094 44%,#2b3846 50%,#9fb1c2 62%,#e3ebf2 78%,#7e92a6 100%);
+  -webkit-text-stroke:1px rgba(235,244,251,.85);
+  filter:drop-shadow(1px 1px 0 #3b4c5c) drop-shadow(2px 2px 0 #24313d) drop-shadow(3px 3px 0 #141d26) drop-shadow(0 6px 10px rgba(0,0,0,.6))}
+.sig-m i{font-style:normal;display:inline-block;margin-left:2px;transform:scale(1.18) translateY(-2px);
+  background-image:linear-gradient(170deg,#f2ffd8 0%,#b8ef6a 30%,#62b52a 60%,#2f7a14 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:1px #d9ffb0}
+.sig-bar{width:1px;align-self:stretch;margin:4px 0;background:linear-gradient(transparent,rgba(160,202,227,.45),transparent)}
+.sig-acm{font-size:34px;letter-spacing:.02em;transform:skewX(-6deg);
+  background-image:radial-gradient(ellipse 30% 60% at 30% 40%,#eaf4fb 0 8%,transparent 30%),repeating-linear-gradient(112deg,var(--c4) 0 4px,var(--c2) 4px 7px,var(--c5) 7px 10px,var(--c3) 10px 14px);
+  background-size:100% 100%,120px 120px;-webkit-text-stroke:.5px rgba(160,202,227,.5);animation:sigflow 6s linear infinite;
+  filter:drop-shadow(0 0 10px color-mix(in srgb,var(--c3) 60%,transparent))}
+@keyframes sigflow{to{background-position:0 0,120px 0}}
+@media(max-width:600px){.sig{gap:14px;padding:12px 20px;border-radius:16px}.sig-m{font-size:32px}.sig-acm{font-size:24px}}
+@media(prefers-reduced-motion:reduce){.sig-acm{animation:none}}
 .foot .who b{display:block;font-family:var(--display);font-weight:600;font-size:clamp(20px,2.2vw,28px)}
 .foot .who span{display:block;color:var(--muted);margin-top:8px}
 .foot nav{display:flex;flex-direction:column;gap:8px;text-align:right}
@@ -417,6 +436,11 @@ footer{position:relative;z-index:2;overflow:hidden;padding-top:80px}
     </div>
     <div class="who"><b id="foot-name"></b><span class="hud">Que o deploy esteja com você · <span id="foot-year"></span></span></div>
     <nav class="hud" id="foot-nav"></nav>
+  </div>
+  <div class="sig-wrap">
+    <a class="sig" href="mailto:contato.carvalhodev@gmail.com" aria-label="M1L! ACM: enviar e-mail">
+      <span class="sig-m">M1L<i>!</i></span><span class="sig-bar"></span><span class="sig-acm">ACM</span>
+    </a>
   </div>
 </footer>
 
